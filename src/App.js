@@ -1,0 +1,253 @@
+// src/App.js
+import "./App.css";
+import React, { useEffect } from "react";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  Outlet,
+  Navigate,
+} from "react-router-dom";
+import { ProSidebarProvider } from "react-pro-sidebar";
+import { useSelector } from "react-redux";
+import { reloadUser } from "./redux/slices/userSlice";
+import store from "./redux/store";
+
+// Your page/component imports
+import Catalog from "./pages/Buyer/Catalog";
+import Home from "./pages/Home";
+import Mode from "./Components/Mode";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import Layout from "./admin/global/Layout";
+import AdminDashboard from "./admin/Dashboard";
+import AdminProfile from "./admin/Profile";
+import NotFound from "./pages/Error";
+import ConnectionStatus from "./Components/ConnectionStatus";
+import ForgotPassword from "./Components/ForgotPassword";
+import VerifyOTP from "./Components/VerifyOTP";
+import ResetPassword from "./Components/ResetPassword";
+
+import DrawerAppBar from "./Components/Navbar"; // Your navbar component
+import About from "./Components/About";
+import Contact from "./pages/Contact";
+import Team from "./Components/Team";
+
+import FeatureAnalyticsSection from "./pages/FeatureAnalyticsSection";
+import Footer from "./pages/Footer";
+import WorldAnalyticsHero from "./pages/WorldAnalyticsHero";
+import TrustSection from "./Components/TrustSection";
+import TestimonialSection from "./Components/TestimonialSection";
+import ContactPage from "./pages/ContactPage";
+import Hero from "./pages/Hero";
+import HowItWorksPage from "./pages/HowItWorksPage";
+// import Catalog from "./pages/Seller/Catalog";
+// About page import in Home page
+import AboutPage from "./pages/AboutPage";
+
+import BuyerNetwork from "./pages/Seller/BuyerNetwork";
+import Dashboard from "./pages/Buyer/DashboardLayout";
+import BuyerDashboard from "./pages/Buyer/BuyerDashboard";
+import Dashboard1 from "./pages/Seller/Dashboard";
+import SellerNetwork from "./pages/Buyer/SellerNetwork";
+import Navbar1 from "./pages/Seller/Navbar1";
+import Navbar2 from "./pages/Buyer/Navbar2";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import HeaderSection from "./pages/HeaderSection";
+import ScrollToTop from "./Components/ScrollToTop";
+import SelectModePage from "./Components/SelectModePage";
+import MyOrders from "./pages/Buyer/MyOrders";
+import Ledger from "./pages/Buyer/Ledger";
+// Layout wrapper for Seller pages with Navbar1
+function SellerLayout() {
+  return (
+    <>
+      <Navbar1 />
+      <Outlet />
+    </>
+  );
+}
+
+// Layout wrapper for Buyer pages with Navbar2 (if needed)
+function BuyerLayout() {
+  return (
+    <>
+      <Navbar2 />
+      <Outlet />
+    </>
+  );
+}
+
+// Layout for pages with Navbar and Footer
+function MainLayout({ children }) {
+  return (
+    <>
+      <DrawerAppBar />
+      {children}
+      <Footer />
+    </>
+  );
+}
+
+function AppContent() {
+  const { isAuthenticated, user } = useSelector((state) => state.user);
+  const location = useLocation();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      store.dispatch(reloadUser());
+    }
+  }, []);
+
+  const AdminDashboardHDC = Layout(AdminDashboard);
+  const AdminProfileHDC = Layout(AdminProfile);
+
+  // Define paths to hide navbar if needed
+  const hideNavbarPaths = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/verify-otp",
+    "/reset-password",
+  ];
+  const shouldShowNavbar = !hideNavbarPaths.includes(location.pathname);
+
+  return (
+    <>
+      <ScrollToTop />
+      <ConnectionStatus />
+      <Routes>
+        {/* Home page WITHOUT footer */}
+        <Route path="/" element={<Home />} />
+        {/* All other pages WITH navbar and footer */}
+        <Route
+          path="/about"
+          element={
+            <MainLayout>
+              <About />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/feature-analytics"
+          element={
+            <MainLayout>
+              <FeatureAnalyticsSection />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/testimonials"
+          element={
+            <MainLayout>
+              <TestimonialSection />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/contact-page"
+          element={
+            <MainLayout>
+              <ContactPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/trust"
+          element={
+            <MainLayout>
+              <TrustSection />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/how-it-works"
+          element={
+            <MainLayout>
+              <HowItWorksPage />
+            </MainLayout>
+          }
+        />
+        {/* Seller routes with Navbar1 */}
+        <Route path="/BuyerNetwork" element={<SellerLayout />}>
+          <Route index element={<BuyerNetwork />} />
+        </Route>
+        {/* <Route path="/Catalog" element={<SellerLayout />}>
+          <Route index element={<Catalog />} />
+        </Route> */}
+        <Route path="/Dashboard" element={<SellerLayout />}>
+          <Route index element={<Dashboard />} />
+        </Route>
+        {/* Public routes outside SellerLayout */}
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/select-mode" element={<SelectModePage />} />
+        <Route path="/about" element={<About />} />{" "}
+        {/* <-- Only one /about route */}
+        <Route path="/footer " element={<Footer />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/team" element={<Team />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/feature-analytics"
+          element={<FeatureAnalyticsSection />}
+        />
+        <Route path="/contact-page" element={<ContactPage />} />
+        <Route path="/world-analytics" element={<WorldAnalyticsHero />} />
+        <Route path="/trust" element={<TrustSection />} />
+        <Route path="/testimonials" element={<TestimonialSection />} />
+        <Route path="/hero" element={<Hero />} />
+        <Route path="/about-page" element={<AboutPage />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/terms-of-service" element={<TermsOfService />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/header-section" element={<HeaderSection />} />
+        <Route path="/Buyer-Dashboard" element={<Dashboard />} />
+        <Route path="/Buyer-Dashboard1" element={<Dashboard />}>
+          <Route index element={<BuyerDashboard />} />
+          <Route path="seller-network" element={<SellerNetwork />} />
+          <Route path="catalog" element={<Catalog />} />
+          <Route path="my-orders" element={<MyOrders />} />
+          <Route path="ledger" element={<Ledger />} />
+          {/* Add other nested routes here if needed */}
+        </Route>
+        {/* Protected dashboard route */}
+        <Route
+          path="/dashboard"
+          element={
+            isAuthenticated ? (
+              user?.role >= 1 ? (
+                <AdminDashboardHDC />
+              ) : (
+                <Navigate to="/select-mode" replace />
+              )
+            ) : (
+              <Login />
+            )
+          }
+        />
+        {/* Protected admin profile route */}
+        {user?.role >= 1 && (
+          <Route path="/admin/profile" element={<AdminProfileHDC />} />
+        )}
+        {/* Catch all route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <ProSidebarProvider>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </ProSidebarProvider>
+  );
+}
