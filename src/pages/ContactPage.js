@@ -15,15 +15,14 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import Footer from "../pages/Footer";
 import Navbar from "../Components/Navbar";
-import ContactImg from "../Images/contactimg.png"; // Ensure this path is correct
+import ContactImg from "../Images/contact.png"; // Ensure this path is correct
 
 export default function ContactPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Constants for styling
-  const ACCENT = "#5074f0";
-  const TEXT = "#22374a";
+  const ACCENT = "#2054a3";
   const SUBTEXT = "#4a5870";
   const CARD_BG = "#fff";
   const contentMaxWidth = "1280px";
@@ -101,8 +100,8 @@ export default function ContactPage() {
             sx={{
               mx: "auto",
               maxWidth: contentMaxWidth,
-              px: { xs: 1, sm: 2 },
-              py: { xs: 3, md: 5 },
+              px: { xs: 3, sm: 3, md: 5, lg: 8 }, // 🔥 Equal responsive padding left/right
+              py: { xs: 3, md: 6 },
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -115,6 +114,7 @@ export default function ContactPage() {
                 fontWeight: "bold",
                 fontSize: { xs: "2rem", sm: "3rem", md: "3.5rem" },
                 mb: 3,
+                textAlign: "center",
               }}
             >
               Get in Touch with Us
@@ -141,9 +141,7 @@ export default function ContactPage() {
                       padding: 3,
                       height: 180,
                       textAlign: "left",
-                      boxShadow: `0 0 20px -5px ${ACCENT}`,
                       "&:hover": {
-                        boxShadow: `0 0 35px 0px ${ACCENT}`,
                         transform: "translateY(-5px)",
                         transition: "all 0.3s ease-in-out",
                       },
@@ -169,112 +167,117 @@ export default function ContactPage() {
             {/* Main Content */}
             <Grid
               container
-              spacing={4}
               justifyContent="center"
-              alignItems="stretch"
+              alignItems="center"
               sx={{ mb: 10 }}
             >
-              {/* Image Section */}
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={10}>
                 <Card
-                  elevation={3}
+                  elevation={4}
                   sx={{
                     borderRadius: 5,
+                    display: "flex",
+                    flexDirection: { xs: "column", md: "row" },
                     overflow: "hidden",
-                    boxShadow: "-18px 20px 20px -8px #5074f0",
-                    height: { xs: 300, md: 450 },
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    height: { xs: "auto", md: 550 }, // Still bigger for form+image
                   }}
                 >
-                  <img
-                    src={ContactImg}
-                    alt="Contact"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
+                  {/* Image Section */}
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      backgroundColor: "#f5f7fa",
+                      minHeight: { xs: 200, md: "100%" },
                     }}
-                  />
-                </Card>
-              </Grid>
-
-              {/* Form Section */}
-              <Grid item xs={12} md={6}>
-                <Card
-                  elevation={3}
-                  sx={{
-                    borderRadius: 5,
-                    backgroundColor: CARD_BG,
-                    padding: { xs: 3, md: 5 },
-                    height: { xs: "auto", md: 600 },
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Typography
-                    variant="h5"
-                    sx={{ color: ACCENT, mb: 4, fontWeight: 700 }}
                   >
-                    Send a Message
-                  </Typography>
-                  <form>
-                    <TextField
-                      fullWidth
-                      label="Your Name"
-                      required
-                      sx={{ mb: 3, backgroundColor: "#fff", borderRadius: 2 }}
-                      InputLabelProps={{
-                        style: { color: ACCENT, fontWeight: 700 },
+                    <img
+                      src={ContactImg}
+                      alt="Contact"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        maxHeight: 550,
                       }}
                     />
-                    <TextField
-                      fullWidth
-                      label="Phone Number"
-                      required
-                      sx={{ mb: 3, backgroundColor: "#fff", borderRadius: 2 }}
-                      InputLabelProps={{
-                        style: { color: ACCENT, fontWeight: 700 },
-                      }}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Email Address"
-                      required
-                      sx={{ mb: 3, backgroundColor: "#fff", borderRadius: 2 }}
-                      InputLabelProps={{
-                        style: { color: ACCENT, fontWeight: 700 },
-                      }}
-                    />
-                    <TextField
-                      fullWidth
-                      label="Your Message"
-                      required
-                      multiline
-                      rows={4}
-                      sx={{ mb: 4, backgroundColor: "#fff", borderRadius: 2 }}
-                      InputLabelProps={{
-                        style: { color: ACCENT, fontWeight: 700 },
-                      }}
-                    />
-                    <Button
-                      fullWidth
-                      variant="contained"
-                      sx={{
-                        backgroundColor: ACCENT,
-                        color: "#fff",
-                        py: 1.5,
-                        fontWeight: 700,
-                        fontSize: "1.125rem",
-                        borderRadius: 3,
-                        "&:hover": { backgroundColor: "#335ac4" },
-                      }}
+                  </Box>
+
+                  {/* Form Section */}
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      p: { xs: 3, md: 5 },
+                      backgroundColor: CARD_BG,
+                    }}
+                  >
+                    <Typography
+                      variant="h5"
+                      sx={{ color: ACCENT, mb: 4, fontWeight: 700 }}
                     >
-                      SEND MESSAGE
-                    </Button>
-                  </form>
+                      Send a Message
+                    </Typography>
+                    <form>
+                      <TextField
+                        fullWidth
+                        label="Your Name"
+                        required
+                        sx={{ mb: 3, backgroundColor: "#fff", borderRadius: 2 }}
+                        InputLabelProps={{
+                          style: { color: ACCENT, fontWeight: 700 },
+                        }}
+                      />
+                      <TextField
+                        fullWidth
+                        label="Phone Number"
+                        required
+                        sx={{ mb: 3, backgroundColor: "#fff", borderRadius: 2 }}
+                        InputLabelProps={{
+                          style: { color: ACCENT, fontWeight: 700 },
+                        }}
+                      />
+                      <TextField
+                        fullWidth
+                        label="Email Address"
+                        required
+                        sx={{ mb: 3, backgroundColor: "#fff", borderRadius: 2 }}
+                        InputLabelProps={{
+                          style: { color: ACCENT, fontWeight: 700 },
+                        }}
+                      />
+                      <TextField
+                        fullWidth
+                        label="Your Message"
+                        required
+                        multiline
+                        rows={5}
+                        sx={{ mb: 4, backgroundColor: "#fff", borderRadius: 2 }}
+                        InputLabelProps={{
+                          style: { color: ACCENT, fontWeight: 700 },
+                        }}
+                      />
+                      <Button
+                        fullWidth
+                        variant="contained"
+                        sx={{
+                          backgroundColor: ACCENT,
+                          color: "#fff",
+                          py: 1.5,
+                          fontWeight: 700,
+                          fontSize: "1.125rem",
+                          borderRadius: 3,
+                          "&:hover": { backgroundColor: "#335ac4" },
+                        }}
+                      >
+                        SEND MESSAGE
+                      </Button>
+                    </form>
+                  </Box>
                 </Card>
               </Grid>
             </Grid>

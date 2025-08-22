@@ -220,7 +220,7 @@ const ContactForm = () => {
                   sx={{
                     fontWeight: 700,
                     background:
-                      "radial-gradient(circle at 5% 40%, #5070f4 0%, #5e36f1 100%)",
+                      "radial-gradient(circle at 5% 40%, #2054a3 0%, #2054a3 100%)",
                     color: "#fff",
                     py: 1.3,
                     borderRadius: 2,
@@ -229,7 +229,7 @@ const ContactForm = () => {
                     mt: 1,
                     "&:hover": {
                       bgcolor:
-                        "radial-gradient(circle at 5% 40%, #5070f4 0%, #5e36f1 100%)",
+                        "radial-gradient(circle at 5% 40%, #2054a3 0%, #2054a3 100%)",
                     },
                   }}
                 >

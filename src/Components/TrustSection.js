@@ -1,5 +1,3 @@
-// components/PricingPlans.jsx
-
 import React from "react";
 import {
   Box,
@@ -11,10 +9,7 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-
 import Navbar from "../Components/Navbar";
-import Footer from "../pages/Footer";
-import HeaderSection from "../pages/HeaderSection";
 
 const PLANS = [
   {
@@ -44,57 +39,33 @@ const PLANS = [
     ],
     button: "Start Pro Trial",
     buttonVariant: "contained",
-    highlighted: true, // This marks the "Most Popular" plan
+    highlighted: true,
   },
 ];
 
 export default function PricingPlans() {
-  const imageUrl =
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c";
-  const titleText = "Bizbridge";
-  const descriptionText =
-    "At BizBridge, we  your privacy and are committed to protecting the personal and business information you entrust to us. This Privacy Policy explains how we collect, use, and safeguard your data to ensure a secure and transparent experience while using our platform.";
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <>
-      <Box>
-        <Navbar />
-      </Box>
-      <Box>
-        <HeaderSection
-          image={imageUrl}
-          title={titleText}
-          description={descriptionText}
-        />
-      </Box>
-      <Box sx={{ backgroundColor: "#f5f7fa", height: "auto" }}>
+      <Navbar />
+      <Box sx={{ backgroundColor: "#f5f7fa", minHeight: "100vh" }}>
         <Box
           sx={{
-            // py: { xs: 5, md: 8 },
-            // px: { xs: 2, md: 0 },
-            mr: { xs: 2, md: 3 },
-            ml: { xs: 2, md: 3 },
-            pb: { xs: 3, md: 4 },
+            maxWidth: "1280px",
+            mx: "auto",
+            px: { xs: 4, sm: 5, md: 7, lg: 9 },
+            py: { xs: 4, md: 8 },
           }}
         >
-          <Box
-            sx={{
-              maxWidth: 1080,
-              mx: "auto",
-              textAlign: "center",
-              mb: 6,
-            }}
-          >
+          <Box sx={{ textAlign: "center", mb: 6 }}>
             <Typography
               variant="h4"
               fontWeight={700}
-              mb={1}
               sx={{
                 fontSize: { xs: "1.8rem", sm: "2.3rem", md: "2.5rem" },
-                pt: { xs: 6, md: 10 },
-                pb: { xs: 2, md: 4 },
+                mb: 2,
               }}
             >
               Simple, Transparent Pricing
@@ -112,7 +83,7 @@ export default function PricingPlans() {
             </Typography>
           </Box>
           <Grid container spacing={isMobile ? 3 : 4} justifyContent="center">
-            {PLANS.map((plan, idx) => (
+            {PLANS.map((plan) => (
               <Grid item xs={12} sm={6} md={4} key={plan.title}>
                 <Paper
                   elevation={plan.highlighted ? 6 : 2}
@@ -121,7 +92,7 @@ export default function PricingPlans() {
                     p: { xs: 3, sm: 4 },
                     textAlign: "center",
                     border: plan.highlighted
-                      ? `2px solid #1763ed`
+                      ? `2px solid #2054a3`
                       : "1px solid #e8eaf1",
                     position: "relative",
                     background: plan.highlighted ? "#fff" : "#fafbfc",
@@ -136,7 +107,7 @@ export default function PricingPlans() {
                         top: -24,
                         left: "50%",
                         transform: "translateX(-50%)",
-                        bgcolor: "#1763ed",
+                        bgcolor: "#2054a3",
                         color: "#fff",
                         px: 2,
                         py: 0.7,
@@ -161,7 +132,7 @@ export default function PricingPlans() {
                     sx={{
                       fontSize: 36,
                       fontWeight: 900,
-                      color: "#1763ed",
+                      color: "#2054a3",
                       mb: 0.2,
                     }}
                   >
@@ -199,7 +170,7 @@ export default function PricingPlans() {
                             justifyContent: "center",
                             borderRadius: "50%",
                             mr: 1,
-                            color: "#1763ed",
+                            color: "#2054a3",
                             fontSize: 16,
                             fontWeight: "bold",
                           }}
@@ -220,9 +191,9 @@ export default function PricingPlans() {
                       fontSize: "1.05rem",
                       py: 1.1,
                       ...(plan.highlighted && {
-                        bgcolor: "#1763ed",
+                        bgcolor: "#2054a3",
                         color: "#fff",
-                        "&:hover": { bgcolor: "#1250cb" },
+                        "&:hover": { bgcolor: "#2054a3" },
                       }),
                     }}
                   >

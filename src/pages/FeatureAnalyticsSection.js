@@ -16,13 +16,13 @@ import Footer from "../pages/Footer";
 const features = [
   {
     icon: <LinkIcon sx={{ color: "#fff", fontSize: 30 }} />,
-    iconBg: "#2753E6",
+    iconBg: "#2054a3",
     title: "Smart Integration",
     desc: "Seamlessly connect all your business tools and platforms with our intelligent integration system. No more data silos or manual processes.",
   },
   {
     icon: <ShowChartIcon sx={{ color: "#fff", fontSize: 30 }} />,
-    iconBg: "#2753E6",
+    iconBg: "#2054a3",
     title: "Real-Time Insights",
     desc: "Get instant visibility into your business performance with advanced analytics and customizable dashboards that update in real-time.",
   },

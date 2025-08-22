@@ -1,4 +1,5 @@
 import React from "react";
+import { Box } from "@mui/material";
 import Navbar from "../Components/Navbar";
 import Hero from "./Hero";
 import FeatureAnalyticsSection from "../pages/FeatureAnalyticsSection";
@@ -10,37 +11,60 @@ import HowItWorksPage from "./HowItWorksPage";
 import AboutPage from "./AboutPage";
 import Footer from "../pages/Footer";
 import ScrollToSectionButton from "../Components/ScrollToSectionButton";
+
+const responsiveContainerSx = {
+  maxWidth: "1280px",
+  mx: "auto",
+  px: { xs: 2, sm: 3, md: 5, lg: 8 },
+  // Optionally, add vertical padding as needed (py)
+};
+
 const Home = () => {
   return (
     <>
       <Navbar />
-      <div id="hero">
+
+      <Box id="hero">
         <Hero />
-      </div>
-      <div id="features">
+      </Box>
+
+      <Box id="features" sx={responsiveContainerSx}>
         <FeatureAnalyticsSection />
-      </div>
-      <div id="about-page">
+      </Box>
+
+      <Box id="about-page" sx={responsiveContainerSx}>
         <AboutPage />
-      </div>
-      <div id="how-it-works">
+      </Box>
+
+      <Box id="how-it-works" sx={responsiveContainerSx}>
         <HowItWorksPage />
-      </div>
-      {/* <div id="pricing">
+      </Box>
+
+      {/* Uncomment and wrap if you want these sections with spacing */}
+      {/* 
+      <Box id="pricing" sx={responsiveContainerSx}>
         <WorldAnalyticsHero />
-      </div> */}
-      {/* <div id="how-it-works">
+      </Box> 
+      */}
+
+      {/* 
+      <Box id="trust-section" sx={responsiveContainerSx}>
         <TrustSection />
-      </div> */}
+      </Box> 
+      */}
 
-      {/* <div id="testimonials">
+      {/* 
+      <Box id="testimonials" sx={responsiveContainerSx}>
         <TestimonialSection />
-      </div> */}
+      </Box> 
+      */}
 
-      <div id="contact">
+      <Box id="contact" sx={responsiveContainerSx}>
         <Contact />
-      </div>
+      </Box>
+
       <Footer />
+
       <ScrollToSectionButton
         targetId="hero"
         showAfter={200}

@@ -15,16 +15,9 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTestimonials } from "../redux/slices/testimonialSlice";
-import HeaderSection from "../pages/HeaderSection";
-import Footer from "../pages/Footer";
 import Navbar from "../Components/Navbar";
-const TestimonialSection = () => {
-  const imageUrl =
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c";
-  const titleText = "Bizbridge";
-  const descriptionText =
-    "At BizBridge, we  your privacy and are committed to protecting the personal and business information you entrust to us. This Privacy Policy explains how we collect, use, and safeguard your data to ensure a secure and transparent experience while using our platform.";
 
+const TestimonialSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
@@ -52,19 +45,16 @@ const TestimonialSection = () => {
       <Box>
         <Navbar />
       </Box>
-      <Box>
-        <HeaderSection
-          image={imageUrl}
-          title={titleText}
-          description={descriptionText}
-        />
-      </Box>
+
+      {/* Parent Container */}
       <Box
         sx={{
           width: "100%",
           bgcolor: "#fff",
           py: { xs: 6, md: 10 },
-          px: { xs: 2, sm: 4 },
+          px: { xs: 3, sm: 3, md: 5, lg: 8 }, // 🔥 Equal space left & right (responsive)
+          maxWidth: "1280px", // Prevents content from stretching too wide
+          mx: "auto", // centers parent box
         }}
       >
         {/* Section Title */}
@@ -172,13 +162,12 @@ const TestimonialSection = () => {
               <Box textAlign="center" sx={{ mt: 4 }}>
                 <Button
                   variant="contained"
-                  // color="primary"
                   onClick={() => setShowAll(!showAll)}
                   sx={{
                     borderRadius: "20px",
                     px: 3,
                     py: 1,
-                    color: "#4747e4ff", // Make text visible
+                    color: "#4747e4ff",
                   }}
                 >
                   {showAll ? "Show Less" : "Read More"}

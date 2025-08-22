@@ -49,9 +49,9 @@ export default function ScrollToSectionButton({
             zIndex: 1200,
             width: 56,
             height: 56,
-            background: "#1763ed",
+            background: "#2054a3",
             boxShadow: 4,
-            "&:hover": { background: "#1250cb" },
+            "&:hover": { background: "#2054a3" },
           }}
         >
           <KeyboardArrowUpIcon sx={{ fontSize: 32, color: "#fff" }} />

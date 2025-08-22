@@ -12,7 +12,7 @@ const Hero = () => (
       alignItems: "center",
       bgcolor: "transparent",
       py: { xs: 8, md: 0 },
-      background: "radial-gradient(circle at 5% 40%, #5070f4 0%, #5e36f1 100%)",
+      background: "radial-gradient(circle at 5% 40%, #2054a3 0%, #2054a3 100%)",
       overflow: "hidden",
       position: "relative",
     }}

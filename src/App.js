@@ -82,9 +82,19 @@ function BuyerLayout() {
 
 // Layout for pages with Navbar and Footer
 function MainLayout({ children }) {
+  const imageUrl =
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c";
+  const titleText = "Bizbridge";
+  const descriptionText =
+    "At BizBridge, we  your privacy and are committed to protecting the personal and business information you entrust to us. This Privacy Policy explains how we collect, use, and safeguard your data to ensure a secure and transparent experience while using our platform.";
   return (
     <>
       <DrawerAppBar />
+      <HeaderSection
+        image={imageUrl}
+        title={titleText}
+        description={descriptionText}
+      />
       {children}
       <Footer />
     </>

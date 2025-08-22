@@ -13,7 +13,7 @@ export default function AboutPage() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        maxHeight: "100vh",
         width: "100%",
         backgroundColor: "#f9fafb",
         px: { xs: 0, sm: 0, md: 8 },
