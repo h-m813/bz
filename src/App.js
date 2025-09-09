@@ -15,7 +15,7 @@ import { reloadUser } from "./redux/slices/userSlice";
 import store from "./redux/store";
 
 // Your page/component imports
-import Catalog from "./pages/Buyer/Catalog";
+
 import Home from "./pages/Home";
 import Mode from "./Components/Mode";
 import Register from "./pages/Register";
@@ -46,20 +46,41 @@ import HowItWorksPage from "./pages/HowItWorksPage";
 // About page import in Home page
 import AboutPage from "./pages/AboutPage";
 
-import BuyerNetwork from "./pages/Seller/BuyerNetwork";
-import Dashboard from "./pages/Buyer/DashboardLayout";
+//Buyer Dashboar
+
+import DashboardLayout from "./pages/Buyer/DashboardLayout";
+import BuyerCatalog from "./pages/Buyer/Catalog";
+import ChatPage from "./pages/Buyer/ChatPage";
+import SettingPage from "./pages/Buyer/SettingPage";
+import OffersPage from "./pages/Buyer/OffersPage";
 import BuyerDashboard from "./pages/Buyer/BuyerDashboard";
-import Dashboard1 from "./pages/Seller/Dashboard";
+import MyOrders from "./pages/Buyer/MyOrders";
+import Ledger from "./pages/Buyer/Ledger";
+import SupportPage from "./pages/Buyer/SupportPage";
 import SellerNetwork from "./pages/Buyer/SellerNetwork";
-import Navbar1 from "./pages/Seller/Navbar1";
+
+//Seller Dashboard
+import SellerDashboardLayout from "./pages/Seller/SellerDashboardLayout";
+import SellerPage from "./pages/Seller/SellerPage";
+import Catalog from "./pages/Seller/Catalog";
+import BuyerNetwork from "./pages/Seller/BuyerNetwork";
+import Order from "./pages/Seller/Order";
+import LedgerPage from "./pages/Seller/LedgerPage";
+import PaymentsPage from "./pages/Seller/PaymentsPage";
+import SchemesAdsPage from "./pages/Seller/SchemesAdsPage";
+import SellerAnalytics from "./pages/Seller/SellerAnalytics";
+import SellerChat from "./pages/Seller/SellerChat";
+import SellerSettings from "./pages/Seller/SellerSettings";
+import SellerSupport from "./pages/Seller/SellerSupport";
+import InterestTransactionCalculator from "./pages/Seller/InterestTransactionCalculator";
+
 import Navbar2 from "./pages/Buyer/Navbar2";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import HeaderSection from "./pages/HeaderSection";
 import ScrollToTop from "./Components/ScrollToTop";
 import SelectModePage from "./Components/SelectModePage";
-import MyOrders from "./pages/Buyer/MyOrders";
-import Ledger from "./pages/Buyer/Ledger";
+
 // Layout wrapper for Seller pages with Navbar1
 function SellerLayout() {
   return (
@@ -182,15 +203,9 @@ function AppContent() {
           }
         />
         {/* Seller routes with Navbar1 */}
-        <Route path="/BuyerNetwork" element={<SellerLayout />}>
-          <Route index element={<BuyerNetwork />} />
-        </Route>
         {/* <Route path="/Catalog" element={<SellerLayout />}>
           <Route index element={<Catalog />} />
         </Route> */}
-        <Route path="/Dashboard" element={<SellerLayout />}>
-          <Route index element={<Dashboard />} />
-        </Route>
         {/* Public routes outside SellerLayout */}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
@@ -217,16 +232,39 @@ function AppContent() {
         <Route path="/terms-of-service" element={<TermsOfService />} />
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/header-section" element={<HeaderSection />} />
-        <Route path="/Buyer-Dashboard" element={<Dashboard />} />
-        <Route path="/Buyer-Dashboard1" element={<Dashboard />}>
+        {/* <Route path="/Buyer-Dashboard" element={<Dashboard />} /> */}
+        <Route path="/buyer-dashboard" element={<DashboardLayout />}>
           <Route index element={<BuyerDashboard />} />
           <Route path="seller-network" element={<SellerNetwork />} />
-          <Route path="catalog" element={<Catalog />} />
+          <Route path="buyer-catalog" element={<BuyerCatalog />} />
           <Route path="my-orders" element={<MyOrders />} />
           <Route path="ledger" element={<Ledger />} />
+          <Route path="offers" element={<OffersPage />} />
+          <Route path="chat" element={<ChatPage />} />
+          <Route path="settings" element={<SettingPage />} />
+          <Route path="support" element={<SupportPage />} />
           {/* Add other nested routes here if needed */}
         </Route>
-        {/* Protected dashboard route */}
+        <Route path="/seller-dashboard" element={<SellerDashboardLayout />}>
+          {/* Protected dashboard route */}
+          <Route index element={<SellerPage />} />
+
+          <Route path="catalog" element={<Catalog />} />
+          <Route path="buyer-network" element={<BuyerNetwork />} />
+          <Route path="orders" element={<Order />} />
+          <Route path="ledger" element={<LedgerPage />} />
+          <Route path="payments" element={<PaymentsPage />} />
+          <Route path="schemes-ads" element={<SchemesAdsPage />} />
+          <Route path="analytics" element={<SellerAnalytics />} />
+          <Route path="seller-chat" element={<SellerChat />} />
+          <Route path="settings" element={<SellerSettings />} />
+          <Route path="support" element={<SellerSupport />} />
+          <Route
+            path="interest-transaction-calculator"
+            element={<InterestTransactionCalculator />}
+          />
+          {/* Add other nested routes here if needed */}
+        </Route>
         <Route
           path="/dashboard"
           element={

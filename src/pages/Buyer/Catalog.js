@@ -2,241 +2,307 @@ import React, { useState } from "react";
 import {
   Box,
   Typography,
-  Tabs,
-  Tab,
+  Button,
+  Chip,
   Grid,
   Card,
   CardContent,
-  Button,
+  CardActions,
+  InputBase,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
 
-const categories = [
-  "All",
-  "Groceries",
-  "Oils",
-  "Flour",
-  "Dairy",
-  "Bakery",
-  "Spices",
+const catalogFilters = [
+  { key: "All", label: "All" },
+  { key: "Groceries", label: "Groceries" },
+  { key: "Oils", label: "Oils" },
+  { key: "Flour", label: "Flour" },
+  { key: "Dairy", label: "Dairy" },
+  { key: "Bakery", label: "Bakery" },
+  { key: "Spices", label: "Spices" },
 ];
 
-const products = [
+// Catalog products data
+const catalogProducts = [
   {
-    id: 1,
     name: "Basmati Rice (1kg)",
-    seller: "Kumar Kirana Store",
     price: 120,
+    unit: "₹120.00",
+    seller: "Kumar Kirana Store",
     category: "Groceries",
   },
   {
-    id: 2,
     name: "Sunflower Oil (1L)",
-    seller: "Sharma Wholesalers",
     price: 150,
+    unit: "₹150.00",
+    seller: "Sharma Wholesalers",
     category: "Oils",
   },
   {
-    id: 3,
     name: "Aashirvaad Atta (5kg)",
-    seller: "Goyal Groceries",
     price: 250,
+    unit: "₹250.00",
+    seller: "Goyal Groceries",
     category: "Flour",
   },
   {
-    id: 4,
     name: "Tata Salt (1kg)",
-    seller: "Kumar Kirana Store",
     price: 25,
+    unit: "₹25.00",
+    seller: "Kumar Kirana Store",
     category: "Groceries",
   },
   {
-    id: 5,
     name: "Amul Milk (1L)",
-    seller: "Gupta Dairy",
     price: 60,
+    unit: "₹60.00",
+    seller: "Gupta Dairy",
     category: "Dairy",
   },
   {
-    id: 6,
     name: "Britannia Bread",
-    seller: "Modern Bakery",
     price: 40,
+    unit: "₹40.00",
+    seller: "Modern Bakery",
     category: "Bakery",
   },
 ];
 
+// Responsive image placeholder style
+const placeholderStyle = {
+  width: "100%",
+  height: 0,
+  paddingTop: "66.666%", // 300/200 aspect ratio
+  background: "#ededed",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: 22,
+  color: "#a7a7a7",
+  position: "relative",
+};
+
 export default function Catalog() {
   const theme = useTheme();
-  const isXs = useMediaQuery(theme.breakpoints.down("sm")); // phones
-  const isSm = useMediaQuery(theme.breakpoints.between("sm", "md")); // small tablets
-  const isMdUp = useMediaQuery(theme.breakpoints.up("md")); // desktops and large tablets
-  const [selectedTab, setSelectedTab] = useState(0);
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const filteredProducts =
-    selectedTab === 0
-      ? products
-      : products.filter((prod) => prod.category === categories[selectedTab]);
+  const [filter, setFilter] = useState("All");
+  const [search, setSearch] = useState("");
+
+  // Handle product search and filter
+  const shownProducts = catalogProducts.filter((product) => {
+    // Filter match
+    const filterMatch = filter === "All" || product.category === filter;
+    // Search match
+    const searchMatch =
+      product.name.toLowerCase().includes(search.toLowerCase()) ||
+      product.seller.toLowerCase().includes(search.toLowerCase());
+    return filterMatch && searchMatch;
+  });
 
   return (
     <Box
       sx={{
         width: "100%",
-        maxWidth: 1600,
-        mx: "auto",
-        mr: { xs: 1, sm: 2, md: 6 }, // Responsive margin-right added here
-        pt: { xs: 2, md: 3 },
-        pb: { xs: 3, md: 5 },
-        px: { xs: 1, sm: 2, md: 3, lg: 8 },
+        minHeight: "100vh",
+        background: "#f8fafc",
+        px: { xs: 2, sm: 4, md: 7, lg: 12 },
+        py: { xs: 2, sm: 4, md: 5 },
         boxSizing: "border-box",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
-      {/* Heading */}
-      <Typography
-        fontWeight={700}
-        fontSize={{ xs: 24, md: 32 }}
-        sx={{ mb: { xs: 2, md: 3 }, color: "#22364a" }}
-      >
-        Product Catalog
-      </Typography>
-
-      {/* Tabs */}
-      <Tabs
-        value={selectedTab}
-        onChange={(e, newValue) => setSelectedTab(newValue)}
-        variant={isXs ? "scrollable" : "standard"}
-        scrollButtons={isXs ? "auto" : false}
+      <Box
         sx={{
-          minHeight: 0,
-          mb: { xs: 2, md: 3 },
-          "& .MuiTab-root": {
-            textTransform: "none",
-            fontWeight: 600,
-            color: "#4d5e6c",
-            background: "#f5f6f8",
-            borderRadius: 2,
-            mx: 0.5,
-            minHeight: 38,
-            px: 2.5,
-            fontSize: { xs: 13, sm: 15 },
-          },
-          "& .Mui-selected": {
-            background: "#2961e1",
-            color: "#fffffff6",
-          },
+          width: "100%",
+          maxWidth: 1400,
+          mx: "auto",
+          paddingRight: "10px",
         }}
       >
-        {categories.map((cat) => (
-          <Tab key={cat} label={cat} />
-        ))}
-      </Tabs>
+        {/* Page Header */}
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 700,
+            color: "#2e4254",
+            letterSpacing: 1,
+            mb: 1,
+            fontSize: { xs: 22, md: 28 },
+          }}
+        >
+          Product Catalog
+        </Typography>
 
-      {/* Product Grid */}
-      <Grid container spacing={3} sx={{ mb: 2 }}>
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
-            <Grid
-              key={product.id}
-              item
-              xs={12} // 1 card per row on phones
-              sm={6} // 2 cards per row on small tablets
-              md={4} // 3 cards per row on medium screens
-              lg={3} // 4 cards per row on large screens/desktops
-              sx={{ display: "flex", justifyContent: "center" }}
+        {/* Filters */}
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 1,
+            mb: 2,
+          }}
+        >
+          {catalogFilters.map((f) => (
+            <Chip
+              key={f.key}
+              label={f.label}
+              clickable
+              color={filter === f.key ? "primary" : "default"}
+              onClick={() => setFilter(f.key)}
+              sx={{
+                fontWeight: filter === f.key ? 700 : 500,
+                background: filter === f.key ? "#2864fd" : "#f2f3f7",
+                color: filter === f.key ? "#fff" : "#2e4254",
+              }}
+            />
+          ))}
+        </Box>
+
+        {/* Search Bar */}
+        <Box
+          sx={{
+            width: { xs: "calc(100% - 32px)", sm: 320 }, // matches container padding
+            mb: 2,
+            background: "#fff",
+            border: "1px solid #eee",
+            borderRadius: 2,
+            px: 2,
+            py: 0.5,
+          }}
+        >
+          <InputBase
+            fullWidth
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search products..."
+            sx={{
+              fontSize: "1rem",
+              width: "100%",
+              background: "transparent",
+              border: "none",
+              outline: "none",
+            }}
+          />
+        </Box>
+
+        {/* Products Grid */}
+        <Grid
+          container
+          spacing={isMobile ? 2 : 4}
+          sx={{
+            mt: 1,
+            mb: 2,
+          }}
+        >
+          {shownProducts.length === 0 ? (
+            <Box
+              sx={{
+                width: "100%",
+                minHeight: "120px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              <Card
+              <Typography variant="body1" sx={{ color: "#63687a" }}>
+                No products found.
+              </Typography>
+            </Box>
+          ) : (
+            shownProducts.map((product, idx) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
+                lg={3}
+                key={product.name + idx}
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
-                  borderRadius: 3,
-                  boxShadow: 0,
-                  background: "#f8fafc",
-                  border: "1px solid #ededed",
-                  width: "100%",
-                  maxWidth: 340,
-                  mx: "auto",
+                  px: { xs: 1, md: 0 },
                 }}
               >
-                <Box
+                <Card
                   sx={{
                     width: "100%",
-                    height: { xs: 120, sm: 150, md: 200 },
-                    background: "#cccccc",
-                    color: "#7d7d7d",
-                    fontWeight: 700,
-                    borderTopLeftRadius: 12,
-                    borderTopRightRadius: 12,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: { xs: "1.3rem", sm: "1.7rem", md: "2rem" },
-                  }}
-                >
-                  300 × 200
-                </Box>
-                <CardContent
-                  sx={{
-                    flexGrow: 1,
-                    p: 2,
-                    pb: 1.5,
+                    borderRadius: 3,
+                    boxShadow: "0 1px 8px rgba(50,60,80,0.07)",
+                    minHeight: 270,
+                    background: "#fff",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    "&:last-child": { pb: 1.5 },
                   }}
                 >
-                  <Typography
-                    fontWeight={700}
-                    fontSize={16}
-                    color="#22364a"
-                    sx={{ mb: 0.3 }}
-                  >
-                    {product.name}
-                  </Typography>
-                  <Typography fontSize={14} color="#757575" sx={{ mb: 0.5 }}>
-                    Sold by {product.seller}
-                  </Typography>
-                  <Typography
-                    fontWeight={700}
-                    fontSize={17}
-                    color="#2961e1"
-                    sx={{ mb: 1 }}
-                  >
-                    ₹{product.price.toFixed(2)}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      textTransform: "none",
-                      fontWeight: 700,
-                      background: "#2961e1",
-                      color: "#fff",
-                      borderRadius: 2,
-                      fontSize: 16,
-                      mt: "auto",
-                      boxShadow: 0,
-                      py: 1.1,
-                      "&:hover": { background: "#1b42ad" },
-                    }}
-                    fullWidth
-                  >
-                    Add to Cart
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
-        ) : (
-          <Grid item xs={12}>
-            <Box sx={{ textAlign: "center", color: "#888", my: 6 }}>
-              <Typography fontWeight={500} fontSize={20}>
-                No products found in this category.
-              </Typography>
-            </Box>
-          </Grid>
-        )}
-      </Grid>
+                  {/* Product placeholder image */}
+                  <Box sx={placeholderStyle}>
+                    <Box
+                      sx={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%,-50%)",
+                        fontSize: 22,
+                        fontWeight: 400,
+                        opacity: 0.7,
+                      }}
+                    >
+                      300 × 200
+                    </Box>
+                  </Box>
+                  <CardContent sx={{ p: 2 }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 700,
+                        fontSize: "1rem",
+                        color: "#1a2535",
+                        mb: 0.5,
+                      }}
+                    >
+                      {product.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#2864fd", fontWeight: 600, mb: 0.2 }}
+                    >
+                      Sold by {product.seller}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "#069326", fontWeight: 700, mt: 0.5 }}
+                    >
+                      {product.unit}
+                    </Typography>
+                  </CardContent>
+                  <CardActions sx={{ px: 2, pb: 2 }}>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      sx={{
+                        background: "#2864fd",
+                        borderRadius: 2,
+                        textTransform: "none",
+                        fontWeight: 700,
+                        letterSpacing: 0.5,
+                        py: 1,
+                        fontSize: "1rem",
+                        boxShadow: "0 2px 12px rgba(40,100,253,0.05)",
+                        ":hover": { background: "#235bdb" },
+                      }}
+                    >
+                      Add to Cart
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))
+          )}
+        </Grid>
+      </Box>
     </Box>
   );
 }

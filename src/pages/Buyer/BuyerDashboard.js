@@ -50,7 +50,6 @@ export default function BuyerDashboard() {
             <Card
               sx={{
                 p: { xs: 2, md: 3 },
-
                 mb: 3,
                 borderRadius: 3,
                 background: "#fff",
@@ -80,6 +79,7 @@ export default function BuyerDashboard() {
                   width: "100%",
                   fontSize: { xs: 22, sm: 32, md: 44 },
                   textAlign: "center",
+                  ml: { xs: -2, sm: 0 },
                 }}
               >
                 <Box sx={{ width: "100%" }}>
@@ -113,6 +113,7 @@ export default function BuyerDashboard() {
                 background: "#fff",
                 boxShadow: 0,
                 width: "100%",
+                mr: { xs: 2, sm: 0 }, // Added margin-right for mobile
               }}
             >
               <Typography
@@ -129,6 +130,7 @@ export default function BuyerDashboard() {
                   gap: 2,
                   flexWrap: "wrap",
                   width: "100%",
+                  ml: { xs: -2, sm: 0 },
                 }}
               >
                 {[
@@ -177,6 +179,7 @@ export default function BuyerDashboard() {
                 background: "#fff",
                 boxShadow: 0,
                 width: "100%",
+                ml: { xs: -2, sm: 0 },
               }}
             >
               <Typography

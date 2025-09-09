@@ -8,7 +8,9 @@ html {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   scroll-behavior: smooth;
 }
-
+body {
+  padding-right: 0px !important;
+}
 .ForgotPassword {
   margin-right: -58% !important;
   margin-top: 1% !important;
@@ -45,8 +47,4 @@ html {
   font-weight: 600;
   border: 2px solid rgb(234, 231, 231);
   border-radius: 12px;
-}
-
-.css-19kzrtu {
-  padding: 10px !important;
 }

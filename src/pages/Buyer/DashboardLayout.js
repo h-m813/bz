@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   Box,
@@ -10,6 +10,14 @@ import {
   Typography,
   Divider,
   IconButton,
+  Switch,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Menu,
+  MenuItem,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
@@ -24,59 +32,115 @@ import {
   Support,
   Book,
   Menu as MenuIcon,
+  AccountCircle, // Profile icon
 } from "@mui/icons-material";
-
+import logo from "../../assets/images/logo.jpg";
 const drawerWidth = 230;
 
 const sidebarItems = [
-  { text: "Dashboard", icon: <Dashboard />, route: "/Buyer-Dashboard1" },
+  { text: "Dashboard", icon: <Dashboard />, route: "/buyer-dashboard" },
   {
     text: "Seller Network",
     icon: <Store />,
-    route: "/Buyer-Dashboard1/seller-network",
+    route: "/buyer-dashboard/seller-network",
   },
-  { text: "Catalog", icon: <Book />, route: "/Buyer-Dashboard1/catalog" },
+  { text: "Catalog", icon: <Book />, route: "/buyer-dashboard/buyer-catalog" },
   {
     text: "My Orders",
     icon: <ShoppingCart />,
-    route: "/Buyer-Dashboard1/my-orders",
+    route: "/buyer-dashboard/my-orders",
   },
-  { text: "Ledger", icon: <Assignment />, route: "/Buyer-Dashboard1/ledger" },
-  { text: "Offers", icon: <LocalOffer />, route: "/offers" },
-  { text: "Chat", icon: <Chat />, route: "/chat" },
-  { text: "Settings", icon: <Settings />, route: "/settings" },
-  { text: "Support", icon: <Support />, route: "/support" },
+  { text: "Ledger", icon: <Assignment />, route: "/buyer-dashboard/ledger" },
+  { text: "Offers", icon: <LocalOffer />, route: "/buyer-dashboard/offers" },
+  { text: "Chat", icon: <Chat />, route: "/buyer-dashboard/chat" },
+  { text: "Settings", icon: <Settings />, route: "/buyer-dashboard/settings" },
+  { text: "Support", icon: <Support />, route: "/buyer-dashboard/support" },
 ];
 
 export default function DashboardLayout() {
-  const navigate = useNavigate();
-  const location = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [isSeller, setIsSeller] = useState(
+    location.pathname.toLowerCase().startsWith("/seller-dashboard")
+  );
+
+  // For profile menu and dialogs
+  const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
+  const [openChatModal, setOpenChatModal] = useState(false);
+  const [openLogoutModal, setOpenLogoutModal] = useState(false);
+
+  useEffect(() => {
+    setIsSeller(
+      location.pathname.toLowerCase().startsWith("/seller-dashboard")
+    );
+  }, [location.pathname]);
+
+  const handleToggle = () => {
+    if (!isSeller) {
+      setIsSeller(true);
+      navigate("/seller-dashboard", { replace: true });
+    } else {
+      setIsSeller(false);
+      navigate("/buyer-dashboard", { replace: true });
+    }
+  };
+
+  const handleProfileIconClick = (event) => {
+    setProfileMenuAnchor(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchor(null);
+  };
+
+  const handleOpenChatModal = () => {
+    setOpenChatModal(true);
+    setProfileMenuAnchor(null);
+  };
+
+  const handleOpenLogoutModal = () => {
+    setOpenLogoutModal(true);
+    setProfileMenuAnchor(null);
+  };
+
+  const handleCloseChatModal = () => setOpenChatModal(false);
+  const handleCloseLogoutModal = () => setOpenLogoutModal(false);
 
   const drawerContents = (
     <>
-      <Box sx={{ px: 3, py: 2 }}>
+      {/* Drawer Top Logo Section */}
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          px: 2,
+          py: 2,
+        }}
+      >
+        <Box
+          component="img"
+          src={logo}
+          alt="BizBridge Logo"
+          sx={{
+            width: 45,
+            height: 45,
+            borderRadius: 1,
+            mr: 1.5,
+          }}
+        />
         <Typography
           variant="h6"
           fontWeight={700}
           sx={{ color: "#fb8900", letterSpacing: 1, fontFamily: "inherit" }}
         >
-          <span style={{ marginRight: 8 }}>
-            <span
-              style={{
-                display: "inline-block",
-                width: 25,
-                height: 25,
-                background: "#fb8900",
-                borderRadius: 5,
-              }}
-            />
-          </span>
           BizBridge
         </Typography>
       </Box>
+
       <Divider />
       <Typography
         sx={{
@@ -114,7 +178,7 @@ export default function DashboardLayout() {
               overflowX: "hidden",
             }}
             onClick={() => {
-              navigate(route);
+              navigate(route, { replace: true });
               if (isMobile) setMobileOpen(false);
             }}
           >
@@ -151,9 +215,9 @@ export default function DashboardLayout() {
       sx={{
         display: "flex",
         minHeight: "100vh",
-        width: "100%", // Use % not vw for less overflow risk
-        minWidth: 0, // Critical for flex layouts to prevent overflow
-        overflowX: "hidden", // Only at root container
+        width: "100%",
+        minWidth: 0,
+        overflowX: "hidden",
         background: "#f2f3f7",
         boxSizing: "border-box",
       }}
@@ -190,8 +254,8 @@ export default function DashboardLayout() {
         sx={{
           flexGrow: 1,
           minHeight: "100vh",
-          width: "100%", // Instead of complicated vw calculations
-          minWidth: 0, // Critical for flex parent to allow children to shrink
+          width: "100%",
+          minWidth: 0,
           display: "flex",
           flexDirection: "column",
           boxSizing: "border-box",
@@ -240,6 +304,63 @@ export default function DashboardLayout() {
             }}
           />
           <Box sx={{ flexGrow: 1 }} />
+
+          {/* Toggle Switch */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              background: "#f6f9fc",
+              borderRadius: 20,
+              px: 0.7,
+              py: 0.2,
+              boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+              ml: 2,
+              mr: 1,
+              minWidth: 130,
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: !isSeller ? 700 : 400,
+                color: !isSeller ? "#2864fd" : "#63687a",
+                transition: "color 0.2s",
+                mr: 1,
+                ml: 1,
+                cursor: "pointer",
+              }}
+              onClick={handleToggle}
+            >
+              Buyer
+            </Typography>
+            <Switch
+              checked={isSeller}
+              onChange={handleToggle}
+              color="primary"
+              sx={{
+                "& .MuiSwitch-thumb": { color: "#2864fd" },
+                "& .MuiSwitch-track": { backgroundColor: "#cfd7ee" },
+                mx: 0,
+              }}
+            />
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: isSeller ? 700 : 400,
+                color: isSeller ? "#2864fd" : "#63687a",
+                transition: "color 0.2s",
+                ml: 1,
+                cursor: "pointer",
+              }}
+              onClick={handleToggle}
+            >
+              Seller
+            </Typography>
+          </Box>
+
+          {/* Profile Box with Profile Icon */}
           <Box
             sx={{
               width: 28,
@@ -249,15 +370,72 @@ export default function DashboardLayout() {
               ml: 2,
               minWidth: 28,
               minHeight: 28,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
             }}
-          />
+            onClick={handleProfileIconClick}
+          >
+            <AccountCircle sx={{ fontSize: 40, color: "#63687a" }} />
+          </Box>
+
+          {/* Profile Menu */}
+          <Menu
+            anchorEl={profileMenuAnchor}
+            open={Boolean(profileMenuAnchor)}
+            onClose={handleProfileMenuClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+          >
+            <MenuItem onClick={handleOpenChatModal}>
+              <Chat sx={{ mr: 1 }} />
+              Chat
+            </MenuItem>
+            <MenuItem onClick={handleOpenLogoutModal}>Logout</MenuItem>
+          </Menu>
         </Box>
+
+        {/* Chat Modal */}
+        <Dialog open={openChatModal} onClose={handleCloseChatModal}>
+          <DialogTitle>Chat</DialogTitle>
+          <DialogContent>
+            <Typography>
+              This is the Chat Modal. Add your chat feature here.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseChatModal}>Close</Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Logout Modal */}
+        <Dialog open={openLogoutModal} onClose={handleCloseLogoutModal}>
+          <DialogTitle>Logout</DialogTitle>
+          <DialogContent>
+            <Typography>Are you sure you want to logout?</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseLogoutModal}>Cancel</Button>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={() => {
+                // Handle actual logout logic here
+                handleCloseLogoutModal();
+                // For actual implementation, call logout API and navigate to login
+              }}
+            >
+              Logout
+            </Button>
+          </DialogActions>
+        </Dialog>
+
         {/* Routed Main Area */}
         <Box
           sx={{
             p: { xs: 1, sm: 2, md: 4 },
-
-            width: "100%", // Content fits container
+            width: "100%",
             mx: "auto",
             minHeight: "calc(100vh - 60px)",
             boxSizing: "border-box",

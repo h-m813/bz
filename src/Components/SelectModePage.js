@@ -90,6 +90,7 @@ export default function SelectModePage() {
               description="Manage your listings, view analytics, and connect with buyers seamlessly."
               icon={<Storefront sx={{ fontSize: 48, color: "#388e3c" }} />}
               // You can add navigation for Seller here if needed
+              onClick={() => navigate("/Seller-Dashboard")}
             />
           </Grid>
         </Grid>
