@@ -81,26 +81,6 @@ import HeaderSection from "./pages/HeaderSection";
 import ScrollToTop from "./Components/ScrollToTop";
 import SelectModePage from "./Components/SelectModePage";
 
-// Layout wrapper for Seller pages with Navbar1
-function SellerLayout() {
-  return (
-    <>
-      <Navbar1 />
-      <Outlet />
-    </>
-  );
-}
-
-// Layout wrapper for Buyer pages with Navbar2 (if needed)
-function BuyerLayout() {
-  return (
-    <>
-      <Navbar2 />
-      <Outlet />
-    </>
-  );
-}
-
 // Layout for pages with Navbar and Footer
 function MainLayout({ children }) {
   const imageUrl =
