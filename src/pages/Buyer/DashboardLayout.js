@@ -20,6 +20,7 @@ import {
   MenuItem,
   useTheme,
   useMediaQuery,
+  Badge,
 } from "@mui/material";
 import {
   Dashboard,
@@ -32,9 +33,12 @@ import {
   Support,
   Book,
   Menu as MenuIcon,
-  AccountCircle, // Profile icon
+  AccountCircle,
+  Notifications, // Notification icon added here
 } from "@mui/icons-material";
 import logo from "../../assets/images/logo.jpg";
+import { useCart } from "../../pages/Buyer/CartContext"; // Adjust path as needed
+
 const drawerWidth = 230;
 
 const sidebarItems = [
@@ -55,18 +59,23 @@ const sidebarItems = [
   { text: "Chat", icon: <Chat />, route: "/buyer-dashboard/chat" },
   { text: "Settings", icon: <Settings />, route: "/buyer-dashboard/settings" },
   { text: "Support", icon: <Support />, route: "/buyer-dashboard/support" },
+  // Removed empty route object from your original sidebarItems for correctness
 ];
 
 export default function DashboardLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [isSeller, setIsSeller] = useState(
     location.pathname.toLowerCase().startsWith("/seller-dashboard")
   );
+
+  // For notification badge demo
+  const [notificationCount, setNotificationCount] = useState(3); // Set your notification count here
 
   // For profile menu and dialogs
   const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
@@ -113,24 +122,12 @@ export default function DashboardLayout() {
   const drawerContents = (
     <>
       {/* Drawer Top Logo Section */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          px: 2,
-          py: 2,
-        }}
-      >
+      <Box sx={{ display: "flex", alignItems: "center", px: 2, py: 2 }}>
         <Box
           component="img"
           src={logo}
           alt="BizBridge Logo"
-          sx={{
-            width: 45,
-            height: 45,
-            borderRadius: 1,
-            mr: 1.5,
-          }}
+          sx={{ width: 45, height: 45, borderRadius: 1, mr: 1.5 }}
         />
         <Typography
           variant="h6"
@@ -227,9 +224,7 @@ export default function DashboardLayout() {
         variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? mobileOpen : true}
         onClose={() => setMobileOpen(false)}
-        ModalProps={{
-          keepMounted: true,
-        }}
+        ModalProps={{ keepMounted: true }}
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -290,6 +285,7 @@ export default function DashboardLayout() {
               <MenuIcon />
             </IconButton>
           )}
+
           <input
             placeholder="Search products, orders..."
             style={{
@@ -303,6 +299,7 @@ export default function DashboardLayout() {
               boxSizing: "border-box",
             }}
           />
+
           <Box sx={{ flexGrow: 1 }} />
 
           {/* Toggle Switch */}
@@ -315,7 +312,7 @@ export default function DashboardLayout() {
               px: 0.7,
               py: 0.2,
               boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
-              ml: 2,
+              ml: 1,
               mr: 1,
               minWidth: 130,
               justifyContent: "center",
@@ -360,7 +357,43 @@ export default function DashboardLayout() {
             </Typography>
           </Box>
 
-          {/* Profile Box with Profile Icon */}
+          {/* Notification Icon with Badge */}
+          <Badge
+            badgeContent={notificationCount}
+            color="error"
+            sx={{ mr: 1.5, mt: 2 }}
+          >
+            <IconButton
+              size="large"
+              aria-label="show notifications"
+              color="inherit"
+              sx={{ mt: -2 }}
+              onClick={() => {
+                /* navigate to notifications or open notification drawer */
+              }}
+            >
+              <Notifications />
+            </IconButton>
+          </Badge>
+
+          {/* Cart Icon with Badge */}
+          <Badge
+            badgeContent={cartCount}
+            color="primary"
+            sx={{ mr: 1.5, mt: 2 }}
+          >
+            <IconButton
+              size="large"
+              aria-label="show cart items"
+              color="inherit"
+              sx={{ mt: -2 }}
+              onClick={() => navigate("/buyer-dashboard/cart")}
+            >
+              <ShoppingCart />
+            </IconButton>
+          </Badge>
+
+          {/* Profile Icon */}
           <Box
             sx={{
               width: 28,
@@ -431,7 +464,7 @@ export default function DashboardLayout() {
           </DialogActions>
         </Dialog>
 
-        {/* Routed Main Area */}
+        {/* Main routed page content */}
         <Box
           sx={{
             p: { xs: 1, sm: 2, md: 4 },

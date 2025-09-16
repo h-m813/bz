@@ -54,7 +54,7 @@ export default function SelectModePage() {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        minHeight: "91vh",
         background: "linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)",
         display: "flex",
         alignItems: "center",

@@ -25,7 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
 import { userRegister, clearErrors } from "../redux/slices/userSlice";
-import PageTitle from "../Components/PageTitle";
+
 import axios from "../axiosInstance";
 
 const Register = () => {

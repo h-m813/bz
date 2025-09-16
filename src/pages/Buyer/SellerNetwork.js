@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import { useNavigate } from "react-router-dom";
 
 const connectedSellers = [
   { name: "Kumar Kirana Store", city: "Bangalore", initials: "KK" },
@@ -27,6 +28,7 @@ const recommendedSellers = [
 export default function SellerNetwork() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
 
   return (
     <Box
@@ -42,14 +44,9 @@ export default function SellerNetwork() {
       }}
     >
       <Box
-        sx={{
-          width: "100%",
-          maxWidth: 1400,
-          mx: "auto",
-          paddingRight: "10px",
-        }}
+        sx={{ width: "100%", maxWidth: 1400, mx: "auto", paddingRight: "10px" }}
       >
-        {/* Top Bar: Search & Find Sellers */}
+        {/* Top Bar */}
         <Box
           sx={{
             display: "flex",
@@ -172,6 +169,7 @@ export default function SellerNetwork() {
                     width: { xs: "100%", sm: "auto" },
                     "&:hover": { background: "#1746a2" },
                   }}
+                  onClick={() => navigate("/buyer-dashboard/view-products")}
                 >
                   View Products
                 </Button>

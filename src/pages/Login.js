@@ -24,7 +24,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
 import { login, clearErrors } from "../redux/slices/userSlice";
-import PageTitle from "../Components/PageTitle";
+
 import axios from "../axiosInstance";
 
 const Login = () => {
@@ -64,10 +64,6 @@ const Login = () => {
 
   return (
     <>
-      <PageTitle
-        title="Login - Bizbridge"
-        description="Login to your Bizbridge account to access all features and services."
-      />
       {/* Full-viewport background */}
       <Box
         sx={{

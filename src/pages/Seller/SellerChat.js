@@ -22,9 +22,7 @@ import {
 export default function SellerChat() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
   const dispatch = useDispatch();
-
   const chatList = useSelector((state) => state.sellerChat.chatList);
   const selectedChatId = useSelector(
     (state) => state.sellerChat.selectedChatId
@@ -55,7 +53,6 @@ export default function SellerChat() {
   const handleSend = () => {
     if (!input.trim()) return;
     const trimmedText = input.trim();
-
     dispatch(
       addMessage({
         chatId: selectedChatId,
@@ -63,16 +60,16 @@ export default function SellerChat() {
       })
     );
     setInput("");
-
-    setTimeout(() => {
-      const botResponse = `Received: "${trimmedText}"`;
-      dispatch(
-        addMessage({
-          chatId: selectedChatId,
-          message: { fromMe: false, text: botResponse },
-        })
-      );
-    }, 1200);
+    // The below block is removed to NOT show bot/received messages
+    // setTimeout(() => {
+    //   const botResponse = `Received: "${trimmedText}"`;
+    //   dispatch(
+    //     addMessage({
+    //       chatId: selectedChatId,
+    //       message: { fromMe: false, text: botResponse },
+    //     })
+    //   );
+    // }, 1200);
   };
 
   return (

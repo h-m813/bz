@@ -12,6 +12,8 @@ import {
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+import { useCart } from "../../pages/Buyer/CartContext"; // Adjust path based on your project
+import { useNavigate } from "react-router-dom";
 
 const catalogFilters = [
   { key: "All", label: "All" },
@@ -23,7 +25,6 @@ const catalogFilters = [
   { key: "Spices", label: "Spices" },
 ];
 
-// Catalog products data
 const catalogProducts = [
   {
     name: "Basmati Rice (1kg)",
@@ -69,37 +70,35 @@ const catalogProducts = [
   },
 ];
 
-// Responsive image placeholder style
 const placeholderStyle = {
   width: "100%",
-  height: 0,
-  paddingTop: "66.666%", // 300/200 aspect ratio
+  paddingTop: "66.66%", // 3:2 ratio
   background: "#ededed",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: 22,
-  color: "#a7a7a7",
   position: "relative",
+  borderRadius: 1,
 };
 
 export default function Catalog() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
 
-  // Handle product search and filter
-  const shownProducts = catalogProducts.filter((product) => {
-    // Filter match
-    const filterMatch = filter === "All" || product.category === filter;
-    // Search match
-    const searchMatch =
+  const shown = catalogProducts.filter((product) => {
+    const matchFilter = filter === "All" || product.category === filter;
+    const matchSearch =
       product.name.toLowerCase().includes(search.toLowerCase()) ||
       product.seller.toLowerCase().includes(search.toLowerCase());
-    return filterMatch && searchMatch;
+    return matchFilter && matchSearch;
   });
+
+  const handleAdd = (product) => {
+    addToCart(product);
+    // optionally show a snackbar if you have one
+  };
 
   return (
     <Box
@@ -110,25 +109,14 @@ export default function Catalog() {
         px: { xs: 2, sm: 4, md: 7, lg: 12 },
         py: { xs: 2, sm: 4, md: 5 },
         boxSizing: "border-box",
-        display: "flex",
-        justifyContent: "center",
       }}
     >
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: 1400,
-          mx: "auto",
-          paddingRight: "10px",
-        }}
-      >
-        {/* Page Header */}
+      <Box sx={{ maxWidth: 1400, mx: "auto", px: 1 }}>
         <Typography
           variant="h5"
           sx={{
             fontWeight: 700,
-            color: "#2e4254",
-            letterSpacing: 1,
+            color: "#22364a",
             mb: 1,
             fontSize: { xs: 22, md: 28 },
           }}
@@ -136,15 +124,7 @@ export default function Catalog() {
           Product Catalog
         </Typography>
 
-        {/* Filters */}
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 1,
-            mb: 2,
-          }}
-        >
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, mb: 2 }}>
           {catalogFilters.map((f) => (
             <Chip
               key={f.key}
@@ -154,144 +134,91 @@ export default function Catalog() {
               onClick={() => setFilter(f.key)}
               sx={{
                 fontWeight: filter === f.key ? 700 : 500,
-                background: filter === f.key ? "#2864fd" : "#f2f3f7",
-                color: filter === f.key ? "#fff" : "#2e4254",
+                backgroundColor: filter === f.key ? undefined : "#f0f3fb",
               }}
             />
           ))}
         </Box>
 
-        {/* Search Bar */}
-        <Box
+        <InputBase
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search products..."
           sx={{
-            width: { xs: "calc(100% - 32px)", sm: 320 }, // matches container padding
-            mb: 2,
-            background: "#fff",
-            border: "1px solid #eee",
-            borderRadius: 2,
             px: 2,
-            py: 0.5,
+            py: 1,
+            boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+            borderRadius: 2,
+            mb: 3,
+            width: { xs: "100%", sm: 320 },
+            bgcolor: "background.paper",
           }}
-        >
-          <InputBase
-            fullWidth
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search products..."
-            sx={{
-              fontSize: "1rem",
-              width: "100%",
-              background: "transparent",
-              border: "none",
-              outline: "none",
-            }}
-          />
-        </Box>
+        />
 
-        {/* Products Grid */}
-        <Grid
-          container
-          spacing={isMobile ? 2 : 4}
-          sx={{
-            mt: 1,
-            mb: 2,
-          }}
-        >
-          {shownProducts.length === 0 ? (
-            <Box
-              sx={{
-                width: "100%",
-                minHeight: "120px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography variant="body1" sx={{ color: "#63687a" }}>
-                No products found.
-              </Typography>
-            </Box>
+        <Grid container spacing={isMobile ? 2 : 4}>
+          {shown.length === 0 ? (
+            <Typography sx={{ color: "#888" }}>No products found.</Typography>
           ) : (
-            shownProducts.map((product, idx) => (
-              <Grid
-                item
-                xs={12}
-                sm={6}
-                md={4}
-                lg={3}
-                key={product.name + idx}
-                sx={{
-                  display: "flex",
-                  px: { xs: 1, md: 0 },
-                }}
-              >
+            shown.map((product, idx) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={idx}>
                 <Card
                   sx={{
-                    width: "100%",
-                    borderRadius: 3,
-                    boxShadow: "0 1px 8px rgba(50,60,80,0.07)",
-                    minHeight: 270,
-                    background: "#fff",
+                    height: "100%",
                     display: "flex",
                     flexDirection: "column",
-                    justifyContent: "space-between",
+                    borderRadius: 3,
+                    boxShadow: "0 1px 6px rgba(0,0,0,0.1)",
                   }}
                 >
-                  {/* Product placeholder image */}
                   <Box sx={placeholderStyle}>
                     <Box
                       sx={{
                         position: "absolute",
                         top: "50%",
                         left: "50%",
-                        transform: "translate(-50%,-50%)",
+                        transform: "translate(-50%, -50%)",
+                        color: "#999",
                         fontSize: 22,
-                        fontWeight: 400,
-                        opacity: 0.7,
                       }}
                     >
                       300 × 200
                     </Box>
                   </Box>
-                  <CardContent sx={{ p: 2 }}>
+                  <CardContent sx={{ flexGrow: 1 }}>
                     <Typography
                       variant="subtitle1"
-                      sx={{
-                        fontWeight: 700,
-                        fontSize: "1rem",
-                        color: "#1a2535",
-                        mb: 0.5,
-                      }}
+                      fontWeight={700}
+                      gutterBottom
                     >
                       {product.name}
                     </Typography>
                     <Typography
                       variant="body2"
-                      sx={{ color: "#2864fd", fontWeight: 600, mb: 0.2 }}
+                      color="primary"
+                      sx={{ cursor: "pointer" }}
+                      onClick={() => window.open(product.seller, "_blank")}
                     >
                       Sold by {product.seller}
                     </Typography>
                     <Typography
-                      variant="body2"
-                      sx={{ color: "#069326", fontWeight: 700, mt: 0.5 }}
+                      variant="h6"
+                      color="success.main"
+                      sx={{ mt: 1 }}
                     >
                       {product.unit}
                     </Typography>
                   </CardContent>
-                  <CardActions sx={{ px: 2, pb: 2 }}>
+                  <CardActions>
                     <Button
                       fullWidth
                       variant="contained"
+                      color="primary"
+                      onClick={() => handleAdd(product)}
                       sx={{
-                        background: "#2864fd",
-                        borderRadius: 2,
-                        textTransform: "none",
                         fontWeight: 700,
-                        letterSpacing: 0.5,
+                        textTransform: "none",
                         py: 1,
-                        fontSize: "1rem",
-                        boxShadow: "0 2px 12px rgba(40,100,253,0.05)",
-                        ":hover": { background: "#235bdb" },
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
                       }}
                     >
                       Add to Cart

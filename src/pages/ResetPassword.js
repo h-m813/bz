@@ -11,7 +11,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import PageTitle from "../Components/PageTitle";
+
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import Password from "@mui/icons-material/Password";
@@ -21,25 +21,22 @@ import { resetPassword, clearErrors } from "../redux/slices/userSlice";
 const ResetPassword = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-    const { error, success, loading } = useSelector(
-    (state) => state.user
-  );
+  const { error, success, loading } = useSelector((state) => state.user);
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  
 
   // Toggle password visibility
   const handleClickShowPassword = () => {
-    setShowPassword(!showPassword); 
+    setShowPassword(!showPassword);
   };
 
   const handleClickShowNewPassword = () => {
     setShowNewPassword(!showNewPassword);
   };
-const location = useLocation();
+  const location = useLocation();
   const token = location.state?.resetPasswordToken;
 
   // // Handle Reset Password APi Call
@@ -52,14 +49,13 @@ const location = useLocation();
   // };
 
   const handleSubmit = (e) => {
-  e.preventDefault();
-  const myForm = new FormData();
-  myForm.set("password", password);
-  myForm.set("confirmPassword", confirmPassword);
-  myForm.set("token", token); // ✅ add token to body
-  dispatch(resetPassword({ passwords: myForm }));
-};
-
+    e.preventDefault();
+    const myForm = new FormData();
+    myForm.set("password", password);
+    myForm.set("confirmPassword", confirmPassword);
+    myForm.set("token", token); // ✅ add token to body
+    dispatch(resetPassword({ passwords: myForm }));
+  };
 
   useEffect(() => {
     if (error) {
@@ -77,10 +73,6 @@ const location = useLocation();
 
   return (
     <div>
-      <PageTitle
-        title="Reset Password - Bizbridge"
-        description="Reset your password to regain access to your account."
-      />
       <Breadcrumbs
         aria-label="breadcrumb"
         sx={{
@@ -231,8 +223,7 @@ const location = useLocation();
                 marginBottom: "-20px",
               }}
             >
-              &copy; {currentYear} Copyright by Bizbridge. All
-              rights reserved.
+              &copy; {currentYear} Copyright by Bizbridge. All rights reserved.
             </p>
           </Box>
         </Box>

@@ -890,7 +890,7 @@ export default function Catalog() {
             }}
           >
             <TextField
-              label="Category Name"
+              label="Buyer Category Name"
               name="name"
               value={newBuyerCategory.name}
               onChange={handleAddBuyerCategoryChange}
@@ -946,7 +946,7 @@ export default function Catalog() {
             }}
           >
             <TextField
-              label="Category Name"
+              label="Product Category Name"
               name="name"
               value={newProductCategory.name}
               onChange={handleAddProductCategoryChange}

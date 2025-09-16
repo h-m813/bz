@@ -2,51 +2,42 @@ import React from "react";
 import {
   Box,
   Typography,
-  Card,
-  CardContent,
-  CardActions,
-  Button,
+  Grid,
   Chip,
+  Button,
+  Paper,
   useTheme,
   useMediaQuery,
-  Link,
 } from "@mui/material";
 
-// Demo Offer Data
 const offers = [
   {
-    id: 1,
     category: "Oils",
     title: "Diwali Dhamaka: 20% Off",
     seller: "Sharma Wholesalers",
-    sellerLink: "#",
-    description:
-      "Get a flat 20% discount on all cooking oils. Minimum purchase of ₹5000.",
+    desc: "Get a flat 20% discount on all cooking oils. Minimum purchase of ₹5000.",
     expires: "2023-11-15",
+    sellerLink: "#",
   },
   {
-    id: 2,
     category: "Groceries",
     title: "Bulk Buy Bonanza",
     seller: "Kumar Kirana Store",
-    sellerLink: "#",
-    description:
-      "Buy 10kg of Basmati Rice and get 1kg of Sugar absolutely free!",
+    desc: "Buy 10kg of Basmati Rice and get 1kg of Sugar absolutely free!",
     expires: "2023-11-20",
+    sellerLink: "#",
   },
   {
-    id: 3,
     category: "Textiles",
     title: "Winter Special",
     seller: "Gupta Textiles",
-    sellerLink: "#",
-    description:
-      "Flat 15% off on all blankets and shawls. Stock up for the cold season.",
+    desc: "Flat 15% off on all blankets and shawls. Stock up for the cold season.",
     expires: "2023-12-31",
+    sellerLink: "#",
   },
 ];
 
-export default function Offers() {
+export default function OffersPage() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -54,146 +45,162 @@ export default function Offers() {
     <Box
       sx={{
         width: "100%",
-        maxWidth: "1600px",
-        mx: "auto",
-        pt: { xs: 2, md: 3 },
-        pb: { xs: 3, md: 5 },
-        px: { xs: 1, sm: 2, md: 4, lg: 8 },
+        minHeight: "100vh",
+        background: "#f8fafc",
+        px: { xs: 2, sm: 4, md: 7, lg: 12 },
+        py: { xs: 2, sm: 4, md: 5 },
         boxSizing: "border-box",
+        display: "flex",
+        justifyContent: "center",
       }}
     >
-      <Typography
-        fontWeight={700}
-        fontSize={{ xs: 22, md: 30 }}
-        sx={{ color: "#22364a", mb: { xs: 2, md: 3 } }}
-      >
-        Active Offers & Schemes
-      </Typography>
-
-      {/* Card Grid */}
       <Box
         sx={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          gap: { xs: 3, md: 4 },
           width: "100%",
+          maxWidth: 1400,
+          mx: "auto",
+          paddingRight: "10px",
         }}
       >
-        {offers.map((offer) => (
-          <Card
-            key={offer.id}
-            sx={{
-              flex: isMobile ? "unset" : "1 1 0",
-              maxWidth: 400,
-              minWidth: 240,
-              background: "#fff",
-              borderRadius: 3,
-              boxShadow: 0,
-              border: "1px solid #ededed",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            {/* Placeholder Image */}
-            <Box
+        <Typography
+          variant={isMobile ? "h5" : "h4"}
+          fontWeight={700}
+          color="text.primary"
+          mb={3}
+        >
+          Active Offers & Schemes
+        </Typography>
+
+        <Grid
+          container
+          spacing={isMobile ? 2 : 4}
+          justifyContent={isMobile ? "center" : "flex-start"}
+        >
+          {offers.map((offer, idx) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={idx}
               sx={{
-                width: "100%",
-                height: 250,
-                background: "#e9e9e9",
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 12,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 38,
-                color: "#b0b0b0",
-                fontWeight: 600,
-                mb: 0,
-              }}
-            >
-              400 × 250
-            </Box>
-            <CardContent
-              sx={{
-                flexGrow: 1,
                 display: "flex",
                 flexDirection: "column",
-                justifyContent: "space-between",
-                pb: 0,
               }}
             >
-              <Chip
-                label={offer.category}
+              <Paper
+                elevation={0}
                 sx={{
-                  fontSize: 13,
-                  fontWeight: 500,
-                  background: "#f2f3f7",
-                  color: "#22364a",
-                  mb: 1.3,
-                  width: "fit-content",
+                  width: "100%",
+                  borderRadius: 4,
+                  background: "#f8f9fb",
+                  boxShadow: "0 2px 8px 0 rgba(80,80,80,0.07)",
+                  display: "flex",
+                  flexDirection: "column",
+                  minHeight: 370,
+                  overflow: "hidden",
                 }}
-              />
-              <Typography
-                fontWeight={700}
-                fontSize={18}
-                sx={{ mb: 0.8, color: "#22364a" }}
               >
-                {offer.title}
-              </Typography>
-              <Typography
-                fontWeight={500}
-                sx={{ mb: 0.5, fontSize: 14, color: "#22364a" }}
-              >
-                by{" "}
-                <Link
-                  href={offer.sellerLink}
+                {/* Placeholder Image */}
+                <Box
                   sx={{
-                    fontWeight: 600,
-                    color: "#2961e1",
-                    fontSize: 14,
-                    textDecoration: "none",
+                    background: "#e9e9e9",
+                    height: 170,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 32,
+                    color: "#bdbdbd",
+                    fontWeight: 700,
+                    letterSpacing: 2,
+                    borderBottom: "1px solid #eee",
+                    width: "100%",
                   }}
                 >
-                  {offer.seller}
-                </Link>
-              </Typography>
-              <Typography sx={{ mb: 1.3, fontSize: 15, color: "#444" }}>
-                {offer.description}
-              </Typography>
-              <Typography
-                sx={{
-                  color: "#8b99a8",
-                  fontSize: 13.5,
-                  mb: 1,
-                  fontWeight: 400,
-                }}
-              >
-                Expires on: {offer.expires}
-              </Typography>
-            </CardContent>
-            <CardActions sx={{ px: 2, pb: 2, pt: 0 }}>
-              <Button
-                size="large"
-                variant="contained"
-                fullWidth
-                sx={{
-                  background: "#2961e1",
-                  borderRadius: 2,
-                  fontWeight: 700,
-                  fontSize: 17,
-                  py: 1,
-                  boxShadow: 0,
-                  textTransform: "none",
-                  "&:hover": {
-                    background: "#1a3c93",
-                  },
-                }}
-              >
-                View Products
-              </Button>
-            </CardActions>
-          </Card>
-        ))}
+                  400 × 250
+                </Box>
+
+                {/* Card Content */}
+                <Box
+                  sx={{
+                    p: 2,
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Chip
+                    label={offer.category}
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: 13,
+                      mb: 1,
+                      width: "max-content",
+                      background: "#eceff1",
+                    }}
+                    size="small"
+                  />
+                  <Typography
+                    variant="subtitle1"
+                    fontWeight={700}
+                    color="text.primary"
+                    gutterBottom
+                  >
+                    {offer.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="primary"
+                    fontWeight={600}
+                    sx={{
+                      color: "#1976d2",
+                      textDecoration: "none",
+                      fontWeight: 600,
+                      mb: 0.5,
+                    }}
+                    component="a"
+                    href={offer.sellerLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    by {offer.seller}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mb: 2 }}
+                  >
+                    {offer.desc}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    sx={{ color: "#7e8792", mb: 1 }}
+                  >
+                    Expires on: {offer.expires}
+                  </Typography>
+                  <Box sx={{ flexGrow: 1 }} />
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    sx={{
+                      mt: 2,
+                      background: "#1976d2",
+                      borderRadius: 2,
+                      fontWeight: 700,
+                      fontSize: 15,
+                      py: 1.2,
+                      textTransform: "none",
+                      boxShadow: "none",
+                      "&:hover": { background: "#195fc5" },
+                    }}
+                  >
+                    View Products
+                  </Button>
+                </Box>
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
     </Box>
   );
