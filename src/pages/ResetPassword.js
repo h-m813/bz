@@ -13,7 +13,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Password from "@mui/icons-material/Password";
 import { message } from "antd";
 import { resetPassword, clearErrors } from "../redux/slices/userSlice";
@@ -39,21 +39,12 @@ const ResetPassword = () => {
   const location = useLocation();
   const token = location.state?.resetPasswordToken;
 
-  // // Handle Reset Password APi Call
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   const myForm = new FormData();
-  //   myForm.set("password", password);
-  //   myForm.set("confirmPassword", confirmPassword);
-  //   dispatch(resetPassword({ token, passwords: myForm }));
-  // };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const myForm = new FormData();
     myForm.set("password", password);
     myForm.set("confirmPassword", confirmPassword);
-    myForm.set("token", token); // ✅ add token to body
+    myForm.set("token", token);
     dispatch(resetPassword({ passwords: myForm }));
   };
 
@@ -66,7 +57,7 @@ const ResetPassword = () => {
       message.success("Password Updated Successfully");
       navigate("/login");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // This line is correct as long as navigate is stable (it is with react-router v6+)
   }, [dispatch, error, success]);
 
   const currentYear = new Date().getFullYear();
@@ -209,11 +200,7 @@ const ResetPassword = () => {
             >
               {loading ? "loading..." : "Reset Password"}
             </Button>
-            <hr
-              style={{
-                marginTop: "20px",
-              }}
-            />
+            <hr style={{ marginTop: "20px" }} />
             <p
               style={{
                 marginTop: "20px",
