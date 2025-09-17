@@ -74,7 +74,21 @@ export default function Catalog() {
   const currentBuyer = buyerCategories.find(
     (b) => b.name === selectedBuyerCategory
   );
-  const categories = currentBuyer ? currentBuyer.categories : [];
+  // If MRP Catalog is selected, categories should be combined from all buyers to show category filters properly
+  const categories =
+    selectedBuyerCategory === "MRP Catalog"
+      ? Array.from(
+          new Set(
+            buyerCategories.reduce(
+              (acc, curr) => [...acc, ...curr.categories],
+              []
+            )
+          )
+        )
+      : currentBuyer
+      ? currentBuyer.categories
+      : [];
+
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Dialog states
@@ -117,12 +131,17 @@ export default function Catalog() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [actionProductId, setActionProductId] = useState(null);
 
-  // Filter products by selected buyer category and product category
-  const filteredProducts = products.filter(
-    (p) =>
-      p.buyerCategory === selectedBuyerCategory &&
-      (selectedCategory === "All" || p.category === selectedCategory)
-  );
+  // --- FILTER PRODUCTS LOGIC ---
+  const filteredProducts =
+    selectedBuyerCategory === "MRP Catalog"
+      ? products.filter(
+          (p) => selectedCategory === "All" || p.category === selectedCategory
+        )
+      : products.filter(
+          (p) =>
+            p.buyerCategory === selectedBuyerCategory &&
+            (selectedCategory === "All" || p.category === selectedCategory)
+        );
 
   // Add Product logic
   const handleAddProductOpen = () => setOpenAddProduct(true);
@@ -162,6 +181,8 @@ export default function Catalog() {
       );
       return;
     }
+    // If MRP Catalog is selected, force buyerCategory to a default (e.g. MRP Catalog or empty) or alert user
+    // For clarity, we add buyerCategory as selectedBuyerCategory
     setProducts((prev) => [
       ...prev,
       {
