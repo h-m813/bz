@@ -34,7 +34,7 @@ import {
   Book,
   Menu as MenuIcon,
   AccountCircle,
-  Notifications, // Notification icon added here
+  Notifications,
 } from "@mui/icons-material";
 import logo from "../../assets/images/logo.jpg";
 import { useCart } from "../../pages/Buyer/CartContext"; // Adjust path as needed
@@ -59,7 +59,6 @@ const sidebarItems = [
   { text: "Chat", icon: <Chat />, route: "/buyer-dashboard/chat" },
   { text: "Settings", icon: <Settings />, route: "/buyer-dashboard/settings" },
   { text: "Support", icon: <Support />, route: "/buyer-dashboard/support" },
-  // Removed empty route object from your original sidebarItems for correctness
 ];
 
 export default function DashboardLayout() {
@@ -75,7 +74,7 @@ export default function DashboardLayout() {
   );
 
   // For notification badge demo
-  const [notificationCount, setNotificationCount] = useState(3); // Set your notification count here
+  const [notificationCount, setNotificationCount] = useState(3);
 
   // For profile menu and dialogs
   const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
@@ -118,6 +117,14 @@ export default function DashboardLayout() {
 
   const handleCloseChatModal = () => setOpenChatModal(false);
   const handleCloseLogoutModal = () => setOpenLogoutModal(false);
+
+  // Logout logic: clear localStorage and navigate to login
+  const handleLogout = () => {
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
+    setOpenLogoutModal(false);
+    navigate("/login", { replace: true });
+  };
 
   const drawerContents = (
     <>
@@ -450,15 +457,7 @@ export default function DashboardLayout() {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseLogoutModal}>Cancel</Button>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => {
-                // Handle actual logout logic here
-                handleCloseLogoutModal();
-                // For actual implementation, call logout API and navigate to login
-              }}
-            >
+            <Button color="primary" variant="contained" onClick={handleLogout}>
               Logout
             </Button>
           </DialogActions>
