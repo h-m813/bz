@@ -80,7 +80,7 @@ export default function SellerDashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Toggle switch for view change
+  // Toggle for seller/buyer view
   const [isSeller, setIsSeller] = useState(
     location.pathname.toLowerCase().startsWith("/seller-dashboard")
   );
@@ -101,7 +101,7 @@ export default function SellerDashboardLayout() {
     }
   };
 
-  // Profile actions logic
+  // Profile menu and modals
   const [profileMenuAnchor, setProfileMenuAnchor] = useState(null);
   const [openChatModal, setOpenChatModal] = useState(false);
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
@@ -127,27 +127,23 @@ export default function SellerDashboardLayout() {
   const handleCloseChatModal = () => setOpenChatModal(false);
   const handleCloseLogoutModal = () => setOpenLogoutModal(false);
 
+  // Logout logic: open modal, then on confirm, clear storage and navigate
+  const handleLogout = () => {
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
+    setOpenLogoutModal(false);
+    navigate("/login", { replace: true });
+  };
+
   const drawerContents = (
     <>
-      {/* Drawer Top Logo + Text */}
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          px: 3,
-          py: 2,
-        }}
-      >
+      {/* Drawer top with logo */}
+      <Box sx={{ display: "flex", alignItems: "center", px: 3, py: 2 }}>
         <Box
           component="img"
           src={logo}
           alt="BizBridge Logo"
-          sx={{
-            width: 42,
-            height: 42,
-            borderRadius: 1,
-            mr: 1.5,
-          }}
+          sx={{ width: 42, height: 42, borderRadius: 1, mr: 1.5 }}
         />
         <Typography
           variant="h6"
@@ -244,9 +240,7 @@ export default function SellerDashboardLayout() {
         variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? mobileOpen : true}
         onClose={() => setMobileOpen(false)}
-        ModalProps={{
-          keepMounted: true,
-        }}
+        ModalProps={{ keepMounted: true }}
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -256,7 +250,6 @@ export default function SellerDashboardLayout() {
             background: "#fff",
             borderRight: "1px solid #ededed",
             overflowX: "hidden",
-            overflowY: "auto",
             height: "100vh",
             display: "flex",
             flexDirection: "column",
@@ -291,8 +284,6 @@ export default function SellerDashboardLayout() {
             top: 0,
             zIndex: 10,
             flexShrink: 0,
-            width: "100%",
-            boxSizing: "border-box",
           }}
         >
           {isMobile && (
@@ -301,28 +292,21 @@ export default function SellerDashboardLayout() {
               edge="start"
               onClick={() => setMobileOpen(true)}
               sx={{ mr: 2 }}
-              size="large"
               aria-label="open drawer"
+              size="large"
             >
               <MenuIcon />
             </IconButton>
           )}
           <Typography
-            variant="subtitle1"
-            sx={{
-              fontWeight: 700,
-              letterSpacing: 1,
-              color: "#3066be",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              maxWidth: "240px",
-            }}
-            noWrap
+            variant={isMobile ? "h6" : "h5"}
+            fontWeight={700}
+            color="primary"
+            sx={{ flexGrow: 1 }}
           >
             Seller Dashboard
           </Typography>
-          <Box sx={{ flexGrow: 1 }} />
+
           {/* Toggle Switch */}
           <Box
             sx={{
@@ -343,11 +327,9 @@ export default function SellerDashboardLayout() {
               variant="body2"
               sx={{
                 fontWeight: !isSeller ? 700 : 400,
-                color: !isSeller ? "#2864fd" : "#63687a",
-                transition: "color 0.2s",
-                mr: 1,
-                ml: 1,
+                color: !isSeller ? "primary.main" : "text.secondary",
                 cursor: "pointer",
+                mr: 1,
               }}
               onClick={handleToggle}
             >
@@ -357,112 +339,81 @@ export default function SellerDashboardLayout() {
               checked={isSeller}
               onChange={handleToggle}
               color="primary"
-              sx={{
-                "& .MuiSwitch-thumb": { color: "#2864fd" },
-                "& .MuiSwitch-track": { backgroundColor: "#cfd7ee" },
-                mx: 0,
-              }}
+              sx={{ mx: 0 }}
             />
             <Typography
               variant="body2"
               sx={{
                 fontWeight: isSeller ? 700 : 400,
-                color: isSeller ? "#2864fd" : "#63687a",
-                transition: "color 0.2s",
-                ml: 1,
+                color: isSeller ? "primary.main" : "text.secondary",
                 cursor: "pointer",
+                ml: 1,
               }}
               onClick={handleToggle}
             >
               Seller
             </Typography>
           </Box>
-          {/* Profile Box with Profile Icon */}
+
+          {/* Profile Icon */}
           <Box
-            sx={{
-              width: 28,
-              height: 28,
-              borderRadius: "50%",
-              background: "#f1f1f1",
-              ml: 2,
-              minWidth: 28,
-              minHeight: 28,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-            }}
-            onClick={(e) => setProfileMenuAnchor(e.currentTarget)}
+            sx={{ ml: 2, cursor: "pointer" }}
+            onClick={handleProfileIconClick}
           >
-            <AccountCircle sx={{ fontSize: 40, color: "#63687a" }} />
+            <AccountCircle sx={{ fontSize: 35, color: "text.secondary" }} />
           </Box>
 
           {/* Profile Menu */}
           <Menu
             anchorEl={profileMenuAnchor}
             open={Boolean(profileMenuAnchor)}
-            onClose={() => setProfileMenuAnchor(null)}
+            onClose={handleProfileMenuClose}
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             transformOrigin={{ vertical: "top", horizontal: "right" }}
           >
             <MenuItem
               onClick={() => {
-                setOpenChatModal(true);
-                setProfileMenuAnchor(null);
-              }}
-            >
-              <Chat sx={{ mr: 1 }} />
-              Chat
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                setOpenLogoutModal(true);
-                setProfileMenuAnchor(null);
+                handleOpenLogoutModal();
+                handleProfileMenuClose();
               }}
             >
               Logout
             </MenuItem>
           </Menu>
+
+          {/* Chat Modal */}
+          <Dialog open={openChatModal} onClose={handleCloseChatModal}>
+            <DialogTitle>Chat</DialogTitle>
+            <DialogContent>
+              <Typography>
+                This is the Chat Modal. Add your chat feature here.
+              </Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseChatModal}>Close</Button>
+            </DialogActions>
+          </Dialog>
+
+          {/* Logout Modal */}
+          <Dialog open={openLogoutModal} onClose={handleCloseLogoutModal}>
+            <DialogTitle>Logout</DialogTitle>
+            <DialogContent>
+              <Typography>Are you sure you want to logout?</Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseLogoutModal}>Cancel</Button>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Box>
 
-        {/* Chat Modal */}
-        <Dialog open={openChatModal} onClose={() => setOpenChatModal(false)}>
-          <DialogTitle>Chat</DialogTitle>
-          <DialogContent>
-            <Typography>
-              This is the Chat Modal. Add your chat feature here.
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenChatModal(false)}>Close</Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Logout Modal */}
-        <Dialog
-          open={openLogoutModal}
-          onClose={() => setOpenLogoutModal(false)}
-        >
-          <DialogTitle>Logout</DialogTitle>
-          <DialogContent>
-            <Typography>Are you sure you want to logout?</Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setOpenLogoutModal(false)}>Cancel</Button>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => {
-                // Actual logout logic here (call API, etc)
-                setOpenLogoutModal(false);
-              }}
-            >
-              Logout
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Routed Main Area */}
+        {/* Content */}
         <Box
           sx={{
             p: { xs: 1, sm: 2, md: 4 },

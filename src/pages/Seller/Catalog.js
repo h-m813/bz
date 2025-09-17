@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -36,7 +36,7 @@ export default function Catalog() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Buyer categories with their categories and discount (replacing gst)
+  // Buyer categories with discount replacing GST and categories
   const [buyerCategories, setBuyerCategories] = useState([
     { name: "MRP Catalog", discount: "", categories: ["Category 1"] },
     { name: "wholeseller", discount: "10%", categories: ["Category 2"] },
@@ -46,7 +46,7 @@ export default function Catalog() {
   const [selectedBuyerCategory, setSelectedBuyerCategory] =
     useState("distributor");
 
-  // Products holding buyerCategory field
+  // Products with gst and buyerCategory fields
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -75,51 +75,48 @@ export default function Catalog() {
     (b) => b.name === selectedBuyerCategory
   );
 
-  // Merge all categories from all buyer categories when MRP Catalog selected, otherwise use current buyer categories
+  // Merge all categories for MRP Catalog, else current buyer's categories
   const categories =
     selectedBuyerCategory === "MRP Catalog"
-      ? Array.from(
-          new Set(
-            buyerCategories.reduce(
-              (acc, curr) => [...acc, ...curr.categories],
-              []
-            )
-          )
-        )
+      ? Array.from(new Set(buyerCategories.flatMap((b) => b.categories)))
       : currentBuyer
       ? currentBuyer.categories
       : [];
 
+  // Add Product form dynamic categories based on selected buyerCategory
+  const [addProductCategories, setAddProductCategories] = useState([]);
+
+  // State for selected category in filter
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // Dialog states
+  // States for dialogs
   const [openAddProduct, setOpenAddProduct] = useState(false);
   const [openAddBuyerCategory, setOpenAddBuyerCategory] = useState(false);
   const [openAddProductCategory, setOpenAddProductCategory] = useState(false);
 
-  // Form states
-  // Remove gst from Add Product form
+  // Add Product form state (includes buyerCategory)
   const [newProduct, setNewProduct] = useState({
     name: "",
     category: "",
     price: "",
     stock: "",
     visible: true,
+    buyerCategory: selectedBuyerCategory,
   });
 
-  // Replace gst with discount in Add Buyer Category form
+  // Add Buyer Category form state (discount instead of gst)
   const [newBuyerCategory, setNewBuyerCategory] = useState({
     name: "",
     discount: "",
   });
 
-  // Add gst field to Add Product Category form
+  // Add Product Category form state (includes gst)
   const [newProductCategory, setNewProductCategory] = useState({
     name: "",
     gst: "",
   });
 
-  // Edit product states remain unchanged as product has gst (no change requested)
+  // Edit Product form states (unchanged)
   const [editProductId, setEditProductId] = useState(null);
   const [editProduct, setEditProduct] = useState({
     name: "",
@@ -131,11 +128,26 @@ export default function Catalog() {
   });
   const [openEditProduct, setOpenEditProduct] = useState(false);
 
-  // Actions menu logic
+  // Actions menu state
   const [anchorEl, setAnchorEl] = useState(null);
   const [actionProductId, setActionProductId] = useState(null);
 
-  // Filter products logic
+  // Update addProductCategories on buyerCategory change in form or buyerCategories update
+  useEffect(() => {
+    if (newProduct.buyerCategory === "MRP Catalog") {
+      setAddProductCategories(
+        Array.from(new Set(buyerCategories.flatMap((b) => b.categories)))
+      );
+    } else {
+      const buyer = buyerCategories.find(
+        (b) => b.name === newProduct.buyerCategory
+      );
+      setAddProductCategories(buyer ? buyer.categories : []);
+    }
+    setNewProduct((prev) => ({ ...prev, category: "" }));
+  }, [newProduct.buyerCategory, buyerCategories]);
+
+  // Filtered products logic
   const filteredProducts =
     selectedBuyerCategory === "MRP Catalog"
       ? products.filter(
@@ -147,8 +159,19 @@ export default function Catalog() {
             (selectedCategory === "All" || p.category === selectedCategory)
         );
 
-  // Add Product Handlers (no gst here)
-  const handleAddProductOpen = () => setOpenAddProduct(true);
+  // Handlers for Add Product Dialog
+  const handleAddProductOpen = () => {
+    setNewProduct({
+      name: "",
+      category: "",
+      price: "",
+      stock: "",
+      visible: true,
+      buyerCategory: selectedBuyerCategory,
+    });
+    setOpenAddProduct(true);
+  };
+
   const handleAddProductClose = () => {
     setOpenAddProduct(false);
     setNewProduct({
@@ -157,8 +180,10 @@ export default function Catalog() {
       price: "",
       stock: "",
       visible: true,
+      buyerCategory: selectedBuyerCategory,
     });
   };
+
   const handleAddProductChange = (e) => {
     const { name, value, type, checked } = e.target;
     setNewProduct((prev) => ({
@@ -166,25 +191,25 @@ export default function Catalog() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
   const handleAddProductSubmit = (e) => {
     e.preventDefault();
     if (
       !newProduct.name ||
       !newProduct.category ||
       !newProduct.price ||
-      newProduct.stock === ""
+      !newProduct.stock ||
+      !newProduct.buyerCategory
     ) {
       alert("Please fill all fields");
       return;
     }
-    if (!categories.includes(newProduct.category)) {
+    if (!addProductCategories.includes(newProduct.category)) {
       alert(
         "Selected product category does not exist in selected buyer category"
       );
       return;
     }
-    // Decide gst for product from productCategory gst if needed (not requested here)
-    // For now, keep gst empty or set as "" or you can derive it if needed
     setProducts((prev) => [
       ...prev,
       {
@@ -193,20 +218,21 @@ export default function Catalog() {
         price: parseFloat(newProduct.price),
         stock: parseInt(newProduct.stock),
         visible: newProduct.visible,
-        buyerCategory: selectedBuyerCategory,
-        gst: "", // no gst input here per request
+        gst: "", // no gst input in Add Product, per request
       },
     ]);
     handleAddProductClose();
   };
 
-  // Edit Product Handlers (unchanged, still has gst input)
+  // Edit product handlers (unchanged)
   const handleEditProductOpen = (product) => {
     setEditProductId(product.id);
     setEditProduct({ ...product });
     setOpenEditProduct(true);
-    handleActionsMenuClose();
+    setAnchorEl(null);
+    setActionProductId(null);
   };
+
   const handleEditProductClose = () => {
     setOpenEditProduct(false);
     setEditProductId(null);
@@ -219,6 +245,7 @@ export default function Catalog() {
       visible: true,
     });
   };
+
   const handleEditProductChange = (e) => {
     const { name, value, type, checked } = e.target;
     setEditProduct((prev) => ({
@@ -226,6 +253,7 @@ export default function Catalog() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
   const handleEditProductSubmit = (e) => {
     e.preventDefault();
     if (
@@ -233,7 +261,7 @@ export default function Catalog() {
       !editProduct.category ||
       !editProduct.price ||
       !editProduct.gst ||
-      editProduct.stock === ""
+      !editProduct.stock
     ) {
       alert("Please fill all fields");
       return;
@@ -259,28 +287,44 @@ export default function Catalog() {
     handleEditProductClose();
   };
 
-  // Delete product
+  // Delete product handler
   const handleDeleteProduct = (id) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
-    handleActionsMenuClose();
+    setAnchorEl(null);
+    setActionProductId(null);
   };
 
-  // Actions menu open/close
+  // Actions menu handlers
   const handleActionsMenuOpen = (event, id) => {
     setAnchorEl(event.currentTarget);
     setActionProductId(id);
   };
+
   const handleActionsMenuClose = () => {
     setAnchorEl(null);
     setActionProductId(null);
   };
 
-  // Add Buyer Category Handlers now with discount instead of gst
+  // Toggle product visibility
+  const handleToggleProductVisible = (id) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, visible: !p.visible } : p))
+    );
+  };
+
+  // Buyer category selection
+  const handleBuyerCategorySelect = (name) => {
+    setSelectedBuyerCategory(name);
+    setSelectedCategory("All");
+  };
+
+  // Add Buyer Category handlers with Discount instead of GST
   const handleAddBuyerCategoryOpen = () => setOpenAddBuyerCategory(true);
   const handleAddBuyerCategoryClose = () => {
     setOpenAddBuyerCategory(false);
     setNewBuyerCategory({ name: "", discount: "" });
   };
+
   const handleAddBuyerCategoryChange = (e) => {
     const { name, value } = e.target;
     setNewBuyerCategory((prev) => ({
@@ -288,6 +332,7 @@ export default function Catalog() {
       [name]: value,
     }));
   };
+
   const handleAddBuyerCategorySubmit = (e) => {
     e.preventDefault();
     if (!newBuyerCategory.name || newBuyerCategory.discount === "") {
@@ -313,12 +358,13 @@ export default function Catalog() {
     handleAddBuyerCategoryClose();
   };
 
-  // Add Product Category Handlers with gst field added
+  // Add Product Category handlers with GST field
   const handleAddProductCategoryOpen = () => setOpenAddProductCategory(true);
   const handleAddProductCategoryClose = () => {
     setOpenAddProductCategory(false);
     setNewProductCategory({ name: "", gst: "" });
   };
+
   const handleAddProductCategoryChange = (e) => {
     const { name, value } = e.target;
     setNewProductCategory((prev) => ({
@@ -326,6 +372,7 @@ export default function Catalog() {
       [name]: value,
     }));
   };
+
   const handleAddProductCategorySubmit = (e) => {
     e.preventDefault();
     if (!newProductCategory.name || newProductCategory.gst === "") {
@@ -342,24 +389,13 @@ export default function Catalog() {
           ? {
               ...cat,
               categories: [...cat.categories, newProductCategory.name],
+              // Optionally update GST info per category here,
+              // or store GST info somewhere else if needed
             }
           : cat
       )
     );
     handleAddProductCategoryClose();
-  };
-
-  // Toggle product visible state
-  const handleToggleProductVisible = (id) => {
-    setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, visible: !p.visible } : p))
-    );
-  };
-
-  // Switch buyer category and reset selected category
-  const handleBuyerCategorySelect = (name) => {
-    setSelectedBuyerCategory(name);
-    setSelectedCategory("All");
   };
 
   return (
@@ -705,7 +741,7 @@ export default function Catalog() {
         </Box>
       </Box>
 
-      {/* Add Product Dialog (GST removed) */}
+      {/* Add Product Dialog */}
       <Dialog
         open={openAddProduct}
         onClose={handleAddProductClose}
@@ -723,45 +759,63 @@ export default function Catalog() {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent dividers sx={{ px: { xs: 1, sm: 3 }, py: 2 }}>
+        <DialogContent sx={{ px: { xs: 1, sm: 3 }, py: 2 }} dividers>
           <Box
             component="form"
             onSubmit={handleAddProductSubmit}
             sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           >
             <TextField
-              label="Product Name"
-              name="name"
-              value={newProduct.name}
+              label="Buyer Category"
+              name="buyerCategory"
+              value={newProduct.buyerCategory}
               onChange={handleAddProductChange}
-              fullWidth
+              select
               required
+              fullWidth
               size="small"
-            />
+            >
+              {buyerCategories.map(({ name }) => (
+                <MenuItem key={name} value={name}>
+                  {name}
+                </MenuItem>
+              ))}
+            </TextField>
+
             <TextField
-              label="Category"
+              label="Product Category"
               name="category"
               value={newProduct.category}
               onChange={handleAddProductChange}
               select
-              fullWidth
               required
+              fullWidth
               size="small"
             >
-              {categories.map((cat) => (
+              {addProductCategories.map((cat) => (
                 <MenuItem key={cat} value={cat}>
                   {cat}
                 </MenuItem>
               ))}
             </TextField>
+
+            <TextField
+              label="Product Name"
+              name="name"
+              value={newProduct.name}
+              onChange={handleAddProductChange}
+              required
+              fullWidth
+              size="small"
+            />
             <TextField
               label="Price"
               name="price"
               value={newProduct.price}
               onChange={handleAddProductChange}
               type="number"
-              fullWidth
               required
+              fullWidth
               size="small"
               InputProps={{
                 startAdornment: (
@@ -775,20 +829,21 @@ export default function Catalog() {
               value={newProduct.stock}
               onChange={handleAddProductChange}
               type="number"
-              fullWidth
               required
+              fullWidth
               size="small"
             />
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Switch
+                name="visible"
                 checked={newProduct.visible}
                 onChange={handleAddProductChange}
-                name="visible"
                 color="primary"
                 size="small"
               />
               <Typography>Visible</Typography>
             </Box>
+
             <DialogActions sx={{ px: 0 }}>
               <Button onClick={handleAddProductClose}>Cancel</Button>
               <Button type="submit" variant="contained">
@@ -799,7 +854,110 @@ export default function Catalog() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Buyer Category Dialog (Discount field replaces GST) */}
+      {/* Edit Product Dialog */}
+      <Dialog
+        open={openEditProduct}
+        onClose={handleEditProductClose}
+        fullWidth
+        maxWidth="sm"
+        scroll="body"
+      >
+        <DialogTitle>
+          Edit Product
+          <IconButton
+            onClick={handleEditProductClose}
+            sx={{ position: "absolute", right: 12, top: 12 }}
+            size="small"
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ px: { xs: 1, sm: 3 }, py: 2 }} dividers>
+          <Box
+            component="form"
+            onSubmit={handleEditProductSubmit}
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
+            <TextField
+              label="Product Name"
+              name="name"
+              value={editProduct.name}
+              onChange={handleEditProductChange}
+              required
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Category"
+              name="category"
+              value={editProduct.category}
+              onChange={handleEditProductChange}
+              select
+              required
+              fullWidth
+              size="small"
+            >
+              {categories.map((cat) => (
+                <MenuItem key={cat} value={cat}>
+                  {cat}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              label="Price"
+              name="price"
+              value={editProduct.price}
+              onChange={handleEditProductChange}
+              type="number"
+              required
+              fullWidth
+              size="small"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">₹</InputAdornment>
+                ),
+              }}
+            />
+            <TextField
+              label="GST (%)"
+              name="gst"
+              value={editProduct.gst}
+              onChange={handleEditProductChange}
+              required
+              fullWidth
+              size="small"
+            />
+            <TextField
+              label="Stock"
+              name="stock"
+              value={editProduct.stock}
+              onChange={handleEditProductChange}
+              type="number"
+              required
+              fullWidth
+              size="small"
+            />
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Switch
+                name="visible"
+                checked={editProduct.visible}
+                onChange={handleEditProductChange}
+                color="primary"
+                size="small"
+              />
+              <Typography>Visible</Typography>
+            </Box>
+            <DialogActions sx={{ px: 0 }}>
+              <Button onClick={handleEditProductClose}>Cancel</Button>
+              <Button type="submit" variant="contained">
+                Save Changes
+              </Button>
+            </DialogActions>
+          </Box>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Buyer Category Dialog */}
       <Dialog
         open={openAddBuyerCategory}
         onClose={handleAddBuyerCategoryClose}
@@ -817,7 +975,7 @@ export default function Catalog() {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent dividers sx={{ px: { xs: 1, sm: 3 }, py: 2 }}>
+        <DialogContent sx={{ px: { xs: 1, sm: 3 }, py: 2 }} dividers>
           <Box
             component="form"
             onSubmit={handleAddBuyerCategorySubmit}
@@ -828,8 +986,8 @@ export default function Catalog() {
               name="name"
               value={newBuyerCategory.name}
               onChange={handleAddBuyerCategoryChange}
-              fullWidth
               required
+              fullWidth
               size="small"
             />
             <TextField
@@ -837,8 +995,8 @@ export default function Catalog() {
               name="discount"
               value={newBuyerCategory.discount}
               onChange={handleAddBuyerCategoryChange}
-              fullWidth
               required
+              fullWidth
               size="small"
             />
             <DialogActions sx={{ px: 0 }}>
@@ -851,7 +1009,7 @@ export default function Catalog() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Product Category Dialog (Add GST field) */}
+      {/* Add Product Category Dialog */}
       <Dialog
         open={openAddProductCategory}
         onClose={handleAddProductCategoryClose}
@@ -869,7 +1027,7 @@ export default function Catalog() {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent dividers sx={{ px: { xs: 1, sm: 3 }, py: 2 }}>
+        <DialogContent sx={{ px: { xs: 1, sm: 3 }, py: 2 }} dividers>
           <Box
             component="form"
             onSubmit={handleAddProductCategorySubmit}
@@ -880,8 +1038,8 @@ export default function Catalog() {
               name="name"
               value={newProductCategory.name}
               onChange={handleAddProductCategoryChange}
-              fullWidth
               required
+              fullWidth
               size="small"
             />
             <TextField
@@ -889,8 +1047,8 @@ export default function Catalog() {
               name="gst"
               value={newProductCategory.gst}
               onChange={handleAddProductCategoryChange}
-              fullWidth
               required
+              fullWidth
               size="small"
             />
             <DialogActions sx={{ px: 0 }}>
