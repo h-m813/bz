@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Paper,
   Typography,
   Button,
   Table,
@@ -12,7 +11,6 @@ import {
   IconButton,
   Switch,
   TextField,
-  Stack,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -38,15 +36,27 @@ export default function Catalog() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Buyer categories: now also hold their categories
+  const [buyerCategories, setBuyerCategories] = useState([
+    { name: "MRP Catalog", gst: "", categories: ["Category 1"] },
+    { name: "wholeseller", gst: "18%", categories: ["Category 2"] },
+    { name: "retailer", gst: "12%", categories: ["Category 3"] },
+    { name: "distributor", gst: "5%", categories: ["Category 4"] },
+  ]);
+  const [selectedBuyerCategory, setSelectedBuyerCategory] =
+    useState("distributor");
+
+  // Products now hold buyerCategory field too
   const [products, setProducts] = useState([
     {
       id: 1,
       name: "Product 1",
-      category: "Category 1",
+      category: "Category 4",
       price: 100,
       gst: "18%",
       stock: 30,
       visible: true,
+      buyerCategory: "distributor",
     },
     {
       id: 2,
@@ -56,20 +66,15 @@ export default function Catalog() {
       gst: "12%",
       stock: 0,
       visible: false,
+      buyerCategory: "wholeseller",
     },
   ]);
 
-  const [categories, setCategories] = useState(["Category 1", "Category 2"]);
-
-  const [buyerCategories, setBuyerCategories] = useState([
-    { name: "MRP Catalog", gst: "" },
-    { name: "wholeseller", gst: "18%" },
-    { name: "retailer", gst: "12%" },
-    { name: "distributor", gst: "5%" },
-  ]);
-  const [selectedBuyerCategory, setSelectedBuyerCategory] =
-    useState("distributor");
-
+  // Currently shown product categories
+  const currentBuyer = buyerCategories.find(
+    (b) => b.name === selectedBuyerCategory
+  );
+  const categories = currentBuyer ? currentBuyer.categories : [];
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Dialog states
@@ -112,11 +117,12 @@ export default function Catalog() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [actionProductId, setActionProductId] = useState(null);
 
-  // Filtering logic
-  const filteredProducts =
-    selectedCategory === "All"
-      ? products
-      : products.filter((p) => p.category === selectedCategory);
+  // Filter products by selected buyer category and product category
+  const filteredProducts = products.filter(
+    (p) =>
+      p.buyerCategory === selectedBuyerCategory &&
+      (selectedCategory === "All" || p.category === selectedCategory)
+  );
 
   // Add Product logic
   const handleAddProductOpen = () => setOpenAddProduct(true);
@@ -150,13 +156,20 @@ export default function Catalog() {
       alert("Please fill all fields");
       return;
     }
+    if (!categories.includes(newProduct.category)) {
+      alert(
+        "Selected product category does not exist in selected buyer category"
+      );
+      return;
+    }
     setProducts((prev) => [
       ...prev,
       {
         ...newProduct,
-        id: prev.length + 1,
+        id: prev.length > 0 ? Math.max(...prev.map((p) => p.id)) + 1 : 1,
         price: parseFloat(newProduct.price),
         stock: parseInt(newProduct.stock),
+        buyerCategory: selectedBuyerCategory,
       },
     ]);
     handleAddProductClose();
@@ -190,6 +203,22 @@ export default function Catalog() {
   };
   const handleEditProductSubmit = (e) => {
     e.preventDefault();
+    if (
+      !editProduct.name ||
+      !editProduct.category ||
+      !editProduct.price ||
+      !editProduct.gst ||
+      editProduct.stock === ""
+    ) {
+      alert("Please fill all fields");
+      return;
+    }
+    if (!categories.includes(editProduct.category)) {
+      alert(
+        "Selected product category does not exist in selected buyer category"
+      );
+      return;
+    }
     setProducts((prev) =>
       prev.map((p) =>
         p.id === editProductId
@@ -197,6 +226,7 @@ export default function Catalog() {
               ...editProduct,
               price: parseFloat(editProduct.price),
               stock: parseInt(editProduct.stock),
+              buyerCategory: selectedBuyerCategory,
             }
           : p
       )
@@ -249,12 +279,16 @@ export default function Catalog() {
     }
     setBuyerCategories((prev) => [
       ...prev,
-      { name: newBuyerCategory.name, gst: newBuyerCategory.gst },
+      {
+        name: newBuyerCategory.name,
+        gst: newBuyerCategory.gst,
+        categories: [],
+      },
     ]);
     handleAddBuyerCategoryClose();
   };
 
-  // Add Product Category logic
+  // Add Product Category logic -- adds to selected buyer category
   const handleAddProductCategoryOpen = () => setOpenAddProductCategory(true);
   const handleAddProductCategoryClose = () => {
     setOpenAddProductCategory(false);
@@ -274,10 +308,19 @@ export default function Catalog() {
       return;
     }
     if (categories.includes(newProductCategory.name)) {
-      alert("This category already exists");
+      alert("This category already exists in current buyer category");
       return;
     }
-    setCategories((prev) => [...prev, newProductCategory.name]);
+    setBuyerCategories((prev) =>
+      prev.map((cat) =>
+        cat.name === selectedBuyerCategory
+          ? {
+              ...cat,
+              categories: [...cat.categories, newProductCategory.name],
+            }
+          : cat
+      )
+    );
     handleAddProductCategoryClose();
   };
 
@@ -286,6 +329,12 @@ export default function Catalog() {
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? { ...p, visible: !p.visible } : p))
     );
+  };
+
+  // Switch buyer category: reset category filter
+  const handleBuyerCategorySelect = (name) => {
+    setSelectedBuyerCategory(name);
+    setSelectedCategory("All");
   };
 
   return (
@@ -367,7 +416,7 @@ export default function Catalog() {
           </Box>
         </Box>
 
-        {/* Buyer Categories */}
+        {/* Buyer Categories (tabs) */}
         <Box
           sx={{
             display: "flex",
@@ -383,7 +432,7 @@ export default function Catalog() {
               variant={
                 selectedBuyerCategory === name ? "contained" : "outlined"
               }
-              onClick={() => setSelectedBuyerCategory(name)}
+              onClick={() => handleBuyerCategorySelect(name)}
               sx={{
                 borderRadius: "40px",
                 minWidth: 100,
@@ -428,7 +477,7 @@ export default function Catalog() {
           </Button>
         </Box>
 
-        {/* Product Categories */}
+        {/* Product Categories for selected buyer */}
         <Box
           sx={{
             display: "flex",
